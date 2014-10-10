@@ -112,4 +112,8 @@ def test_printll(capsys):  # Python gets REALLY MAD if I call this just print().
 
     llst.printll()
     out, err = capsys.readouterr()
-    assert out == "(12, 'sam', 37, 'tango')"
+    assert out == "(12, 'sam', 37, 'tango')\n"
+
+    print llst
+    out, err = capsys.readouterr()
+    assert out == "(12, 'sam', 37, 'tango')\n"

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from stack import Stack
-import sys
+
 
 class Linked_list(Stack):
     def __init__(self):
@@ -41,8 +41,8 @@ class Linked_list(Stack):
         # Now testnode is the one before node
         testnode.next = node.next
 
-    def printll(self):
-        sys.stdout.write("(")  # Have to use this because 'print X,' inserts spaces
+    def __str__(self):
+        outstring = "("
         reversedStack = Stack()  # gotta print from bottom up, so we reverse it in this stack
         node = self.top
         while node:
@@ -52,9 +52,13 @@ class Linked_list(Stack):
         while reversedStack.top:
             thing = reversedStack.pop()
             if isinstance(thing, unicode) or isinstance(thing, str):
-                sys.stdout.write("'" + thing + "'")
+                outstring += "'" + thing + "'"
             else:
-                sys.stdout.write(str(thing))
+                outstring += str(thing)
             if reversedStack.top:
-                sys.stdout.write(", ")
-        sys.stdout.write(")")
+                outstring += ", "
+        outstring += ")"
+        return outstring
+
+    def printll(self):
+        print self.__str__()
