@@ -66,11 +66,12 @@ class DoublyLinkedList(LinkedList):
             self.top = self.top.next
             if self.top:
                 self.top.previous = None
-            if node is self.bottom:
-                self.bottom = self.bottom.previous
-                if self.bottom:
-                    self.bottom.next = None
+            else: # the list is now empty
+                self.bottom = None
                 return None
+        if node is self.bottom: # list has at least 1 item after removal if we get here.
+            self.bottom = self.bottom.previous
+            self.bottom.next = None
             return None
         # It's in the middle if we get here, all this stuff should exist
         node.previous.next = node.next
