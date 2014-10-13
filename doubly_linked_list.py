@@ -66,10 +66,11 @@ class DoublyLinkedList(LinkedList):
             self.top = self.top.next
             if self.top:
                 self.top.previous = None
-        if node is self.bottom:
-            self.bottom = self.bottom.previous
-            if self.bottom:
-                self.bottom.next = None
+            if node is self.bottom:
+                self.bottom = self.bottom.previous
+                if self.bottom:
+                    self.bottom.next = None
+                return None
             return None
         # It's in the middle if we get here, all this stuff should exist
         node.previous.next = node.next
