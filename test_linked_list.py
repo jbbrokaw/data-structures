@@ -1,5 +1,5 @@
 """
-code that tests the circle class defined in circle.py
+code that tests the LinkedList class defined in linked_list.py
 
 can be run with py.test
 """
@@ -14,13 +14,13 @@ from stack import Node
 def test_create():
     """Should raise TypeError if initialized with data, return a linked list otherwise"""
     with pytest.raises(TypeError):
-        l.Linked_list("a")
-    assert isinstance(l.Linked_list(), l.Linked_list)
+        l.LinkedList("a")
+    assert isinstance(l.LinkedList(), l.LinkedList)
 
 
 def test_insert():
     """Should be able to insert something at the head of the list, fail if nothing"""
-    llst = l.Linked_list()
+    llst = l.LinkedList()
     with pytest.raises(TypeError):
         llst.insert()
 
@@ -32,7 +32,7 @@ def test_insert():
 
 def test_pop():
     '''Should return top data & remove it, raise IndexError if empty'''
-    llst = l.Linked_list()
+    llst = l.LinkedList()
     with pytest.raises(IndexError) as err:
         llst.pop()
         assert "empty" in err.value
@@ -47,7 +47,7 @@ def test_pop():
 
 def test_size():
     """Should return the correct size"""
-    llst = l.Linked_list()
+    llst = l.LinkedList()
     assert llst.size() == 0
     for i in xrange(5):
         llst.insert(i)
@@ -58,7 +58,7 @@ def test_size():
 
 def test_search():
     """Should return the node containing 'val' in the list, if present, else None"""
-    llst = l.Linked_list()
+    llst = l.LinkedList()
     with pytest.raises(TypeError):
         llst.search()
         llst.search("adfe", 5)
@@ -86,7 +86,7 @@ def test_search():
 def test_remove():
     """remove(node) should remove the given node from the list, wherever it might be
     if node is not an item in the list, raises IndexError"""
-    llst = l.Linked_list()
+    llst = l.LinkedList()
     llst.insert(1)
     llst.insert(2)
     llst.insert(3)
@@ -104,7 +104,7 @@ def test_remove():
 
 def test_printll(capsys):  # Python gets REALLY MAD if I call this just print().
     """Should print the list represented as a Python tuple literal: "(12, 'sam', 37, 'tango')" """
-    llst = l.Linked_list()
+    llst = l.LinkedList()
     llst.insert(12)
     llst.insert('sam')
     llst.insert(37)
