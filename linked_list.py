@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from stack import Stack
 
 
-class Linked_list(Stack):
+class LinkedList(Stack):
     def __init__(self):
         Stack.__init__(self)
 
