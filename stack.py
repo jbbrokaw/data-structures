@@ -18,7 +18,6 @@ class Stack(object):
             self.top = Node(data)
         else:
             self.top = Node(data, self.top)
-        # return self
 
     def pop(self):
         if self.top:
