@@ -1,7 +1,7 @@
 Data Structures
 =====
 
-=== Simple implementations of: ===
+## Simple implementations of:
   1. stacks
     * Full unit test coverage including errors
     * Implements push & pop
