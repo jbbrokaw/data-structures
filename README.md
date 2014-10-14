@@ -18,3 +18,7 @@ Data Structures
     * Inherits from linked list, which gave me the very useful search() method,
       but was otherwise confusing.
     * Doubly linked lists are more useful when you need to use both ends (like a queue, see below)
+  5. Queue
+    * Basically reimplements doubly linked list
+    * Only methods are queue(), enqueue(), and size
+    * Directions are back  <-  [next, value, previous] -> front (i.e., the person at the front of the line calls "NEXT" to get the next customer)
