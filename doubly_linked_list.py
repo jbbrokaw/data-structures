@@ -66,10 +66,10 @@ class DoublyLinkedList(LinkedList):
             self.top = self.top.next
             if self.top:
                 self.top.previous = None
-            else: # the list is now empty
+            else:  # the list is now empty
                 self.bottom = None
                 return None
-        if node is self.bottom: # list has at least 1 item after removal if we get here.
+        if node is self.bottom:  # list has at least 1 item after removal if we get here.
             self.bottom = self.bottom.previous
             self.bottom.next = None
             return None
