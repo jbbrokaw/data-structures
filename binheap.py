@@ -21,9 +21,16 @@ class Binheap(object):
     def _find_parent(self, index):
         return (index - 1) // 2
 
-    def _find_child(self, index):
-        """Find the index of the first child (second child is retrunval + 1)"""
-        return 2 * index + 1
+    def _find_largest_child(self, index):
+        """Find the index of the "largest" child of node index"""
+        if 2 * index + 1 > self._bottom:
+            return 2 * index + 1
+        if 2 * index + 2 > self._bottom:
+            return 2 * index + 1
+        if self._compare(self._data[2 * index + 1], self._data[2 * index + 2]):
+            return 2 * index + 1
+        else:
+            return 2 * index + 2
 
     def _compare(self, val1, val2):
         if self._comp == 1:
@@ -42,3 +49,25 @@ class Binheap(object):
                 self._data[parent], self._data[current]
             current = parent
             parent = self._find_parent(current)
+
+    def pop(self):
+        returnval = self._data[0]  # Will raise IndexError if empty
+        if len(self._data) > 1:
+            self._data[0] = self._data.pop()  # Put the last thing at the head
+            self._bottom += -1
+        else:
+            self._data.pop()  # Remove the only item in there
+            self._bottom += -1
+            return returnval
+
+        # Do a heap-down
+        current = 0
+        child = self._find_largest_child(current)
+        while child <= self._bottom and \
+                self._compare(self._data[child], self._data[current]):
+            self._data[current], self._data[child] = \
+                self._data[child], self._data[current]
+            current = child
+            child = self._find_largest_child(current)
+
+        return returnval
