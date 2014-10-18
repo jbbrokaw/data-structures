@@ -22,3 +22,7 @@ Data Structures
     * Basically reimplements doubly linked list
     * Only methods are queue(), enqueue(), and size
     * Directions are back  <-  [next, value, previous] -> front (i.e., the person at the front of the line calls "NEXT" to get the next customer)
+  6. Binary heap
+    * Either maximum heap or minimum heap, depending on contructor (defaults to maximum)
+    * Only has push & pop methods (which include the rebuilding necessary)
+    * A few little helper functions are in there
