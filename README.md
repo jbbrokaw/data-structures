@@ -26,3 +26,6 @@ Data Structures
     * Either maximum heap or minimum heap, depending on contructor (defaults to maximum)
     * Only has push & pop methods (which include the rebuilding necessary)
     * A few little helper functions are in there
+  7. Priority Queue
+    * Reuses binary heap, but only takes tuples of (priority, value)
+    * Only returns value
