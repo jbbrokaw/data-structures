@@ -29,3 +29,7 @@ Data Structures
   7. Priority Queue
     * Reuses binary heap, but only takes tuples of (priority, value)
     * Only returns value
+  8. Binary Search Tree
+    * For now, only has insert(val), contains(val), size(), depth(), and balance()
+    * running get_dot() will return a string for importing into graphviz (save as .dot file)
+    * Funcitons tested with pytest
