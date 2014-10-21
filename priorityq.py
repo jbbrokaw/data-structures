@@ -6,7 +6,7 @@ from binheap import Binheap
 class PriorityQueue(Binheap):
     """Acts just like a binheap, but takes tuples of (priority, data) and
     heaps on priority"""
-    def compare(self, tuple1, tuple2):  # Override
+    def _compare(self, tuple1, tuple2):  # Override
         """Compare using Binheap's protocol explicitly on first value of tuple
         (this is actually python's default behavior, but it's nice to make it
         explicit"""
