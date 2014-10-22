@@ -3,60 +3,66 @@ import random
 
 
 class BST(object):
-    # Will have attributes leftchild, rightchild, and value,
-    # but they are ONLY added when needed
+    # To have an empty BST, we need to perhaps not have a "value"
+    # but I want to be able to put "None" in this data structure
+    # So I am using an "_EMPTY" boolean to denote that "value" should be
+    # considered empty (and not full with None)
     def __init__(self):
-        pass
+        self.leftchild = None
+        self.rightchild = None
+        self._EMPTY = True  # Should only ever be true for the head node!
+        self.value = None
 
     def insert(self, val):
         """insert val into the BST. If val is already there, it is ignored."""
-        if not hasattr(self, "value"):
+        if self._EMPTY:
             self.value = val
+            self._EMPTY = False
             return
 
         if val == self.value:
             return
 
         if val > self.value:
-            if not hasattr(self, "rightchild"):
+            if not self.rightchild:
                 self.rightchild = BST()  # Make a subtree
             self.rightchild.insert(val)
             return
 
         # If we get here it goes left
-        if not hasattr(self, "leftchild"):
+        if not self.leftchild:
             self.leftchild = BST()  # Make a subtree
         self.leftchild.insert(val)
         return
 
     def contains(self, val):
         """return True if val is in the BST, False if not."""
-        if not hasattr(self, "value"):  # We're an empty head
+        if self._EMPTY:  # We're an empty head
             return False
         if val == self.value:
             return True
         if val > self.value:
-            if not hasattr(self, "rightchild"):
+            if not self.rightchild:
                 return False
             return self.rightchild.contains(val)
 
         # If we get here it'll be on the left
-        if not hasattr(self, "leftchild"):
+        if not self.leftchild:
             return False
         return self.leftchild.contains(val)
 
     def size(self):
         """return the integer size of the BST (total number of values stored)
         0 if the tree is empty."""
-        if not hasattr(self, "value"):  # We're an empty head
+        if self._EMPTY:  # We're an empty head
             return 0
 
-        if not hasattr(self, "rightchild"):
+        if not self.rightchild:
             rightsize = 0
         else:
             rightsize = self.rightchild.size()
 
-        if not hasattr(self, "leftchild"):
+        if not self.leftchild:
             leftsize = 0
         else:
             leftsize = self.leftchild.size()
@@ -66,15 +72,15 @@ class BST(object):
     def depth(self):
         """return an integer representing the total number of levels in the
         tree."""
-        if not hasattr(self, "value"):  # We're an empty head
+        if self._EMPTY:  # We're an empty head
             return 0
 
-        if not hasattr(self, "rightchild"):
+        if not self.rightchild:
             rightdepth = 0
         else:
             rightdepth = self.rightchild.depth()
 
-        if not hasattr(self, "leftchild"):
+        if not self.leftchild:
             leftdepth = 0
         else:
             leftdepth = self.leftchild.depth()
@@ -85,46 +91,130 @@ class BST(object):
         """return a positive or negative integer that represents how well
         balanced the tree is. Trees deeper on the left return a positive values
         trees deeper on the right than the left return a negative value."""
-        if not hasattr(self, "value"):  # We're an empty head
+        # Possibly worthwhile to keep this as a property and update it when
+        # we insert/delete, rather than visit every node every time we call
+        # this function
+        if self._EMPTY:  # We're an empty head
             return 0
 
-        if not hasattr(self, "rightchild"):
+        if not self.rightchild:
             rightdepth = 0
         else:
             rightdepth = self.rightchild.depth()
 
-        if not hasattr(self, "leftchild"):
+        if not self.leftchild:
             leftdepth = 0
         else:
             leftdepth = self.leftchild.depth()
 
         return leftdepth - rightdepth
 
+    def _find_minimum_and_delete(self, parent=None):
+        """Return the minimum value of a (sub)tree and delete its node"""
+        current = self  # Could update "self" in the loop but that's confusing
+        while current.leftchild:
+            parent = current
+            current = current.leftchild
+        returnval = current.value
+        current.delete(current.value, parent)
+        return returnval
+
+    def _find_maximum_and_delete(self, parent=None):
+        """Return the maximum value of a (sub)tree and delete its node"""
+        # This is slightly repetitive with _find_minimum, but it;s hard to
+        # implement a min/max switch elegantly; I'll just repeat these 7 lines
+        current = self
+        while current.rightchild:
+            parent = current
+            current = current.rightchild
+        returnval = current.value
+        current.delete(current.value, parent)
+        return returnval
+
+    def _replacenode(self, newnode):
+        # Basically self = newnode,
+        # but that does't work in methods called on self
+        # (just changes local name)
+        self.value = newnode.value
+        if newnode.leftchild:
+            self.leftchild = newnode.leftchild
+        elif self.leftchild:
+            self.leftchild = None
+        if newnode.rightchild:
+            self.rightchild = newnode.rightchild
+        elif self.rightchild:
+            self.rightchild = None
+
+    def delete(self, val, parent=None):
+        """remove val from the tree if present. If not present no change.
+        Return None in all cases"""
+        if self._EMPTY:  # We're an empty head
+            return
+        if val == self.value:
+            # Do the deletion
+            if (not self.leftchild) and \
+                    (not self.rightchild):
+                if parent:
+                    if parent.leftchild and parent.leftchild is self:
+                        parent.leftchild = None
+                    else:  # We must be the right child
+                        parent.rightchild = None
+                    return
+                #No parent (we are head) if we are here
+                self.value = None
+                self._EMPTY = True
+
+            # Here, we know we have at least one child
+            if not self.leftchild:  # must have only a rightchild
+                self._replacenode(self.rightchild)
+                return
+            if not self.rightchild:  # must have only a leftchild
+                self._replacenode(self.leftchild)
+                return
+
+            # Here, we must do the two-child deletion
+            if self.balance() < 0:  # left-heavy, delete on right
+                self.value = \
+                    self.rightchild._find_minimum_and_delete(parent=self)
+            else:  # right-heavy (or balanced)
+                self.value = \
+                    self.leftchild._find_maximum_and_delete(parent=self)
+            return
+
+        # Keep searching (with parent info)
+        if val > self.value:
+            if not self.rightchild:
+                return  # Val is not in tree
+            return self.rightchild.delete(val, parent=self)
+
+        # If we get here it'll be on the left
+        if not self.leftchild:
+            return
+        return self.leftchild.delete(val, parent=self)
+
     def get_dot(self):
         """return the tree with root 'self' as a dot graph for visualization"""
-        return "digraph G{\n%s}" % ("" if not hasattr(self, "value")
-                                       else ("\t%s;\n%s\n" % (
-                                                    self.value,
-                                                    "\n".join(self._get_dot())
-                                                    )
-                                            )
-                                    )
+        return "digraph G{\n%s}" \
+            % (
+                "" if self._EMPTY
+                else ("\t%s;\n%s\n" % (self.value, "\n".join(self._get_dot())))
+            )
 
     def _get_dot(self):
         """recursively prepare a dot graph entry for this node."""
-        if hasattr(self, "leftchild"):
+        if self.leftchild:
             yield "\t%s -> %s;" % (self.value, self.leftchild.value)
             for i in self.leftchild._get_dot():
                 yield i
-        elif hasattr(self, "rightchild"):
+        elif self.rightchild:
             r = random.randint(0, 1e9)
             yield "\tnull%s [shape=point];" % r
             yield "\t%s -> null%s;" % (self.value, r)
-        if hasattr(self, "rightchild"):
+        if self.rightchild:
             yield "\t%s -> %s;" % (self.value, self.rightchild.value)
             for i in self.rightchild._get_dot():
                 yield i
-        elif hasattr(self, "leftchild"):
+        elif self.leftchild:
             r = random.randint(0, 1e9)
             yield "\tnull%s [shape=point];" % r
             yield "\t%s -> null%s;" % (self.value, r)
