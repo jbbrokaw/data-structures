@@ -185,12 +185,12 @@ class BST(object):
         if val > self.value:
             if not self.rightchild:
                 return  # Val is not in tree
-            return self.rightchild.delete(val, self)
+            return self.rightchild.delete(val, parent=self)
 
         # If we get here it'll be on the left
         if not self.leftchild:
             return
-        return self.leftchild.delete(val, self)
+        return self.leftchild.delete(val, parent=self)
 
     def get_dot(self):
         """return the tree with root 'self' as a dot graph for visualization"""

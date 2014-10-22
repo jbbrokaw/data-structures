@@ -36,4 +36,4 @@ Data Structures
     * Has insert(val), contains(val), size(), depth(), and balance() (a representation of the left - right balance)
     * Now has delete()
     * running get_dot() will return a string for importing into graphviz (save as .dot file)
-    * All funcitons tested with pytest
+    * All functions tested with pytest
