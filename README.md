@@ -1,6 +1,9 @@
 Data Structures
 =====
 
+![Travis status](https://travis-ci.org/jbbrokaw/data-structures.svg?branch=master "Travis status")
+
+
 ## Simple implementations of:
   1. stacks
     * Full unit test coverage including errors
