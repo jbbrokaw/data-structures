@@ -1,6 +1,9 @@
 Data Structures
 =====
 
+![Travis status](https://travis-ci.org/jbbrokaw/data-structures.svg?branch=master "Travis status")
+
+
 ## Simple implementations of:
   1. stacks
     * Full unit test coverage including errors
@@ -30,6 +33,7 @@ Data Structures
     * Reuses binary heap, but only takes tuples of (priority, value)
     * Only returns value
   8. Binary Search Tree
-    * For now, only has insert(val), contains(val), size(), depth(), and balance()
+    * Has insert(val), contains(val), size(), depth(), and balance() (a representation of the left - right balance)
+    * Now has delete()
     * running get_dot() will return a string for importing into graphviz (save as .dot file)
-    * Funcitons tested with pytest
+    * All functions tested with pytest

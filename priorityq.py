@@ -9,8 +9,8 @@ class PriorityQueue(Binheap):
     def _compare(self, tuple1, tuple2):  # Override
         """Compare using Binheap's protocol explicitly on first value of tuple
         (this is actually python's default behavior, but it's nice to make it
-        explicit"""
-        Binheap.compare(self, tuple1[0], tuple2[0])
+        explicit)"""
+        return Binheap._compare(self, tuple1[0], tuple2[0])
 
     def insert(self, item):
         """Make sure it's a tuple and try to insert it"""

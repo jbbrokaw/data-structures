@@ -44,7 +44,7 @@ class Binheap(object):
         current = self._bottom
         parent = self._find_parent(current)
         while self._compare(self._data[current], self._data[parent]) \
-                and current > 0:
+                and (current > 0):
             self._data[current], self._data[parent] = \
                 self._data[parent], self._data[current]
             current = parent
