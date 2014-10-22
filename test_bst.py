@@ -206,11 +206,11 @@ def test_delete_no_children():
     assert bintree.size() == 8
     assert bintree.delete(4) is None
     assert bintree.size() == 7
-    assert not hasattr(bintree.leftchild, "rightchild")  # 4 is gone
+    assert not bintree.leftchild.rightchild  # 4 is gone
     assert bintree.delete(10) is None
     assert bintree.size() == 6
-    assert not hasattr(bintree.rightchild.rightchild, "leftchild")
-    assert not hasattr(bintree.rightchild.rightchild, "rightchild")
+    assert not bintree.rightchild.rightchild.leftchild  # 9 is a leaf
+    assert not bintree.rightchild.rightchild.rightchild
     # 10 is gone
 
 
@@ -318,24 +318,27 @@ def test_delete_two_children():
     # |         |
     # 1         10
     assert bintree.size() == 9
-    assert bintree.delete(3) is None
-    #     5
-    #    / \
-    #   4   7
-    #  /   / \
-    # 2   6   9
-    # |       |
-    # 1       10
+    assert bintree.leftchild.balance() == 1  # The subtree at 3 is left-heavy
+    assert bintree.delete(3) is None  # So this will delete left-style
+    #      5
+    #    /   \
+    #   2     7
+    #  /\    / \
+    # 1  4  6   9
+    #           |
+    #          10
     assert bintree.size() == 8
-    assert bintree.leftchild.value == 4
-
-    assert bintree.delete(5) is None
-    #     6
-    #    / \
-    #   4   7
-    #  /     \
-    # 2       9
-    # |       |
-    # 1       10
+    assert bintree.leftchild.value == 2
+    assert bintree.balance() == -1  # The whole tree is now right-heavy
+    assert bintree.delete(5) is None  # So deleting the top will go right-style
+    #      6
+    #    /   \
+    #   2     7
+    #  /\      \
+    # 1  4      9
+    #           |
+    #          10
     assert bintree.value == 6
-    assert not hasattr(bintree.rightchild, "leftchild")
+    assert bintree.size() == 7
+    assert bintree.rightchild.value == 7
+    assert bintree.balance() == -1
