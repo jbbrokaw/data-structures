@@ -100,15 +100,79 @@ class BST(object):
 
         return leftdepth - rightdepth
 
+    def _find_minimum_and_delete(self, parent=None):
+        """Return the minimum value of a (sub)tree and delete its node"""
+        current = self
+        while hasattr(current, "leftchild"):
+            parent = current
+            current = current.leftchild
+        returnval = current.value
+        current.delete(current.value, parent)
+        return returnval
+
+    def _replacenode(self, newnode):
+        # Basically self = newnode,
+        # but that does't work in methods called on self
+        # (just changes local name)
+        self.value = newnode.value
+        if hasattr(newnode, "leftchild"):
+            self.leftchild = newnode.leftchild
+        elif hasattr(self, "leftchild"):
+            del self.leftchild
+        if hasattr(newnode, "rightchild"):
+            self.rightchild = newnode.rightchild
+        elif hasattr(self, "rightchild"):
+            del self.rightchild
+
+    def delete(self, val, parent=None):
+        """remove val from the tree if present. If not present no change.
+        Return None in all cases"""
+        if not hasattr(self, "value"):  # We're an empty head
+            return
+        if val == self.value:
+            # Do the deletion
+            if (not hasattr(self, "leftchild")) and \
+                    (not hasattr(self, "rightchild")):
+                if parent:
+                    if hasattr(parent, "leftchild") and \
+                            parent.leftchild is self:
+                        del parent.leftchild
+                    else:  # We must be the right child
+                        del parent.rightchild
+                    return
+                #No parent if we are here
+                del self.value
+
+            # Here, we know we have at least one child
+            if not hasattr(self, "leftchild"):  # must have only a rightchild
+                self._replacenode(self.rightchild)
+                return
+            if not hasattr(self, "rightchild"):  # must have only a leftchild
+                self._replacenode(self.leftchild)
+                return
+
+            #Here, we must do the two-child deletion
+            self.value = self.rightchild._find_minimum_and_delete(self)
+            return
+
+        # Keep searching (with parent info)
+        if val > self.value:
+            if not hasattr(self, "rightchild"):
+                return  # Val is not in tree
+            return self.rightchild.delete(val, self)
+
+        # If we get here it'll be on the left
+        if not hasattr(self, "leftchild"):
+            return
+        return self.leftchild.delete(val, self)
+
     def get_dot(self):
         """return the tree with root 'self' as a dot graph for visualization"""
-        return "digraph G{\n%s}" % ("" if not hasattr(self, "value")
-                                       else ("\t%s;\n%s\n" % (
-                                                    self.value,
-                                                    "\n".join(self._get_dot())
-                                                    )
-                                            )
-                                    )
+        return "digraph G{\n%s}" \
+            % (
+                "" if not hasattr(self, "value")
+                else ("\t%s;\n%s\n" % (self.value, "\n".join(self._get_dot())))
+            )
 
     def _get_dot(self):
         """recursively prepare a dot graph entry for this node."""

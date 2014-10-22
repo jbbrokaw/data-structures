@@ -30,6 +30,7 @@ Data Structures
     * Reuses binary heap, but only takes tuples of (priority, value)
     * Only returns value
   8. Binary Search Tree
-    * For now, only has insert(val), contains(val), size(), depth(), and balance()
+    * Has insert(val), contains(val), size(), depth(), and balance() (a representation of the left - right balance)
+    * Now has delete()
     * running get_dot() will return a string for importing into graphviz (save as .dot file)
-    * Funcitons tested with pytest
+    * All funcitons tested with pytest
