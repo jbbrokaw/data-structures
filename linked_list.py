@@ -1,28 +1,35 @@
 from __future__ import unicode_literals
-
 from stack import Stack
 
 
-class LinkedList(Stack):
+class Node(object):
+    def __init__(self, content=None, next=None):
+        self.content = content
+        self.next = next
+
+
+class LinkedList(object):
     def __init__(self):
-        Stack.__init__(self)
+        self.head = None
 
     def insert(self, data):
-        Stack.push(self, data)
-        #JBB: I could override push to make it not work anymore on Linked_lists (force users to call it insert), but eeeeeh.
+        if not self.head:
+            self.head = Node(data)
+        else:
+            self.head = Node(data, self.head)
 
     def size(self):
         s = 0
-        node = self.top
+        node = self.head
         while node:
             s += 1
             node = node.next
         return s
 
     def search(self, val):
-        if not self.top:
+        if not self.head:
             return None
-        node = self.top
+        node = self.head
         while node.content != val:
             node = node.next
             if not node:
@@ -30,10 +37,10 @@ class LinkedList(Stack):
         return node
 
     def remove(self, node):
-        if node is self.top:
-            self.top = self.top.next
+        if node is self.head:
+            self.head = self.head.next
             return
-        testnode = self.top
+        testnode = self.head
         while testnode.next is not node:
             if not testnode.next:
                 raise IndexError('remove(node) where node was not in list')
@@ -41,10 +48,17 @@ class LinkedList(Stack):
         # Now testnode is the one before node
         testnode.next = node.next
 
+    def pop(self):
+        if self.head:
+            data = self.head.content
+            self.head = self.head.next
+            return data
+        raise IndexError('pop from empty stack')
+
     def __str__(self):
         outstring = "("
-        reversedStack = Stack()  # gotta print from bottom up, so we reverse it in this stack
-        node = self.top
+        reversedStack = Stack()  # gotta print from first in to last in,
+        node = self.head         # so we reverse it in this stack
         while node:
             reversedStack.push(node.content)
             node = node.next

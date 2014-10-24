@@ -18,7 +18,7 @@ def test_create():
     assert isinstance(d.DoublyLinkedList(), d.DoublyLinkedList)
 
 
-def test__insert():
+def test_insert():
     """insert(val) will insert the value 'val' at the head of the list"""
     dll = d.DoublyLinkedList()
     with pytest.raises(TypeError):
@@ -26,12 +26,12 @@ def test__insert():
 
     #returns nothing
     assert dll.insert("blaguboo") is None
-    assert dll.top.content == "blaguboo"
-    assert dll.bottom.content == "blaguboo"
+    assert dll.head.content == "blaguboo"
+    assert dll.tail.content == "blaguboo"
     dll.insert("one thing")
     dll.insert("second thing")
-    assert dll.top.content == "second thing"
-    assert dll.bottom.content == "blaguboo"
+    assert dll.head.content == "second thing"
+    assert dll.tail.content == "blaguboo"
     #push still works, too.
 
 
@@ -42,16 +42,16 @@ def test_append():
         dll.append()
     # returns nothing, we have no way of getting at stuff yet
     assert dll.append("blaguboo") is None
-    assert dll.top.content == "blaguboo"
-    assert dll.bottom.content == "blaguboo"
+    assert dll.head.content == "blaguboo"
+    assert dll.tail.content == "blaguboo"
     dll.append("one thing")
     dll.append("second thing")
-    assert dll.bottom.content == "second thing"
-    assert dll.top.content == "blaguboo"
+    assert dll.tail.content == "second thing"
+    assert dll.head.content == "blaguboo"
 
 
 def test_pop():
-    '''Should return top data & remove it, raise IndexError if empty'''
+    '''Should return head data & remove it, raise IndexError if empty'''
     dll = d.DoublyLinkedList()
     with pytest.raises(IndexError) as err:
         dll.pop()
@@ -60,8 +60,8 @@ def test_pop():
     dll.insert(9)
     assert dll.pop() == 9
     assert dll.pop() == 10
-    assert dll.top is None
-    assert dll.bottom is None
+    assert dll.head is None
+    assert dll.tail is None
     with pytest.raises(IndexError) as err:
         dll.pop()
         assert "empty" in err.value
@@ -77,8 +77,8 @@ def test_shift():
     dll.insert(9)
     assert dll.shift() == 10
     assert dll.shift() == 9
-    assert dll.top is None
-    assert dll.bottom is None
+    assert dll.head is None
+    assert dll.tail is None
     with pytest.raises(IndexError) as err:
         dll.pop()
         assert "empty" in err.value
@@ -102,11 +102,11 @@ def test_remove():
     assert dll.search(2) is None
     assert dll.search(3).next.content == 1  # i.e., 3 goes to 1 now
     dll.remove(1)
-    assert dll.top.content == 3
-    assert dll.bottom.content == 3
-    assert dll.top.next is None
-    assert dll.top is dll.bottom
-    assert dll.bottom.previous is None
+    assert dll.head.content == 3
+    assert dll.tail.content == 3
+    assert dll.head.next is None
+    assert dll.head is dll.tail
+    assert dll.tail.previous is None
     dll.remove(3)
-    assert dll.top is None
-    assert dll.bottom is None
+    assert dll.head is None
+    assert dll.tail is None
