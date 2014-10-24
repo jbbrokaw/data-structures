@@ -34,6 +34,8 @@ Data Structures
     * Only returns value
   8. Binary Search Tree
     * Has insert(val), contains(val), size(), depth(), and balance() (a representation of the left - right balance)
-    * Now has delete()
+    * Now has delete(), which tries to maintain good balance
     * running get_dot() will return a string for importing into graphviz (save as .dot file)
+    * A test.dot will be saved automatically if bst.py is run (if __name__ == "__main__")
+    * Has four traversal methods that return generators (in-order, post-order, pre-order, & breadth_first)
     * All functions tested with pytest

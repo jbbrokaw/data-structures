@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import pytest  # used for the exception testing
 
 from bst import BST
+import random
 
 
 def test_init():
@@ -342,3 +343,137 @@ def test_delete_two_children():
     assert bintree.size() == 7
     assert bintree.rightchild.value == 7
     assert bintree.balance() == -1
+
+
+def test_in_order_traversal():
+    """Returns a generator of values in the tree using in-order traversal"""
+    import types
+    bintree = BST()
+    with pytest.raises(TypeError):
+        bintree.in_order(1)  # No args/kwargs
+    with pytest.raises(TypeError):
+        bintree.in_order(None)
+
+    assert isinstance(bintree.in_order(), types.GeneratorType)
+
+    testlist = []
+    for i in xrange(30):
+        testval = random.random()
+        bintree.insert(testval)
+        testlist.append(testval)
+
+    assert bintree.size() == 30
+    ordered_generator = bintree.in_order()
+    testlist.sort()
+
+    for number in ordered_generator:
+        assert number == testlist.pop(0)
+
+
+def test_pre_post_order_traversal():
+    """Tests both pre and post-order traversal"""
+    import types
+    bintree = BST()
+
+    with pytest.raises(TypeError):
+        bintree.pre_order(1)  # No args/kwargs
+    with pytest.raises(TypeError):
+        bintree.pre_order(None)
+
+    assert isinstance(bintree.pre_order(), types.GeneratorType)
+
+    with pytest.raises(TypeError):
+        bintree.post_order(1)  # No args/kwargs
+    with pytest.raises(TypeError):
+        bintree.post_order(None)
+
+    assert isinstance(bintree.post_order(), types.GeneratorType)
+
+    bintree.insert(5)
+    bintree.insert(3)
+    bintree.insert(7)
+    bintree.insert(6)
+    bintree.insert(2)
+    bintree.insert(4)
+    bintree.insert(1)
+    bintree.insert(9)
+    bintree.insert(10)
+    #      5
+    #    /   \
+    #   3     7
+    #  /\    / \
+    # 2  4  6   9
+    # |         |
+    # 1         10
+    pre_gen = bintree.pre_order()
+    post_gen = bintree.post_order()
+
+    assert pre_gen.next() == 5
+    assert pre_gen.next() == 3
+    assert pre_gen.next() == 2
+    assert pre_gen.next() == 1
+    assert pre_gen.next() == 4
+    assert pre_gen.next() == 7
+    assert pre_gen.next() == 6
+    assert pre_gen.next() == 9
+    assert pre_gen.next() == 10
+
+    assert post_gen.next() == 1
+    assert post_gen.next() == 2
+    assert post_gen.next() == 4
+    assert post_gen.next() == 3
+    assert post_gen.next() == 6
+    assert post_gen.next() == 10
+    assert post_gen.next() == 9
+    assert post_gen.next() == 7
+    assert post_gen.next() == 5
+
+    with pytest.raises(StopIteration):
+        pre_gen.next()
+
+    with pytest.raises(StopIteration):
+        post_gen.next()
+
+
+def test_breadth_first_traversal():
+    """Tests breadth-first traversal"""
+    import types
+    bintree = BST()
+
+    with pytest.raises(TypeError):
+        bintree.breadth_first(1)  # No args/kwargs
+    with pytest.raises(TypeError):
+        bintree.breadth_first(None)
+
+    assert isinstance(bintree.breadth_first(), types.GeneratorType)
+
+    bintree.insert(5)
+    bintree.insert(3)
+    bintree.insert(7)
+    bintree.insert(6)
+    bintree.insert(2)
+    bintree.insert(4)
+    bintree.insert(1)
+    bintree.insert(9)
+    bintree.insert(10)
+    #      5
+    #    /   \
+    #   3     7
+    #  /\    / \
+    # 2  4  6   9
+    # |         |
+    # 1         10
+    gen = bintree.breadth_first()
+
+    assert gen.next() == 5
+    assert gen.next() == 3
+    assert gen.next() == 7
+    assert gen.next() == 2
+    assert gen.next() == 4
+    assert gen.next() == 6
+    assert gen.next() == 9
+    assert gen.next() == 1
+    assert gen.next() == 10
+
+    with pytest.raises(StopIteration):
+        gen.next()
