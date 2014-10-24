@@ -192,6 +192,77 @@ class BST(object):
             return
         return self.leftchild.delete(val, parent=self)
 
+    def _gen_in_order(self):
+        if self.leftchild:
+            for i in self.leftchild._gen_in_order():
+                yield i
+
+        if not self._EMPTY:
+            yield self.value
+
+        if self.rightchild:
+            for i in self.rightchild._gen_in_order():
+                yield i
+
+    def _gen_pre_order(self):
+        if not self._EMPTY:
+            yield self.value
+
+        if self.leftchild:
+            for i in self.leftchild._gen_pre_order():
+                yield i
+
+        if self.rightchild:
+            for i in self.rightchild._gen_pre_order():
+                yield i
+
+    def _gen_post_order(self):
+        if self.leftchild:
+            for i in self.leftchild._gen_post_order():
+                yield i
+
+        if self.rightchild:
+            for i in self.rightchild._gen_post_order():
+                yield i
+
+        if not self._EMPTY:
+            yield self.value
+
+    def _gen_level(self, level):
+        if self._EMPTY:  # Empty generator for empty tree
+            return
+        if level == 0:  # We're on this level
+            yield self.value
+        elif level > 0:  # We're on a lower level
+            if self.leftchild:
+                for val in self.leftchild._gen_level(level - 1):
+                    yield val
+            if self.rightchild:
+                for val in self.rightchild._gen_level(level - 1):
+                    yield val
+
+    def _gen_breadth_first(self):
+        for level in xrange(self.depth()):
+            for val in self._gen_level(level):
+                yield val
+
+    def in_order(self):
+        """Return a generator of values in the tree using in-order traversal"""
+        return self._gen_in_order()
+
+    def pre_order(self):
+        """Return a generator of values in the tree using pre-order
+        traversal"""
+        return self._gen_pre_order()
+
+    def post_order(self):
+        """Return a generator of values in the tree using post-order
+        traversal"""
+        return self._gen_post_order()
+
+    def breadth_first(self):
+        return self._gen_breadth_first()
+
     def get_dot(self):
         """return the tree with root 'self' as a dot graph for visualization"""
         return "digraph G{\n%s}" \
@@ -218,3 +289,15 @@ class BST(object):
             r = random.randint(0, 1e9)
             yield "\tnull%s [shape=point];" % r
             yield "\t%s -> null%s;" % (self.value, r)
+
+
+if __name__ == '__main__':
+    # Setup for testing
+    import io
+    bintree = BST()
+    for i in xrange(30):
+        bintree.insert(random.randint(0, 1e3))
+    assert bintree.size() == 30
+    dotfile = io.open("test.dot", "w")
+    dotfile.write(bintree.get_dot())
+    dotfile.close()
