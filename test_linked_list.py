@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import pytest  # used for the exception testing
 
 import linked_list as l
-from stack import Node
+from linked_list import Node
 
 
 def test_create():
@@ -36,8 +36,8 @@ def test_pop():
     with pytest.raises(IndexError) as err:
         llst.pop()
         assert "empty" in err.value
-    llst.push(10)
-    llst.push(9)
+    llst.insert(10)
+    llst.insert(9)
     assert llst.pop() == 9
     assert llst.pop() == 10
     with pytest.raises(IndexError) as err:
@@ -66,12 +66,12 @@ def test_search():
 
     llst.insert(5)
 
-    assert llst.search(5) is llst.top
+    assert llst.search(5) is llst.head
 
     llst.insert(4)
     llst.insert(3)
 
-    assert llst.search(5) is llst.top.next.next
+    assert llst.search(5) is llst.head.next.next
     evalnode = llst.search(4)
     assert isinstance(evalnode, Node)
     assert evalnode.content == 4
