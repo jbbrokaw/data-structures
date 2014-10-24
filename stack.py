@@ -8,10 +8,8 @@ class Node(object):
 
 
 class Stack(object):
-    top = None
-
     def __init__(self):
-        pass
+        self.top = None
 
     def push(self, data):
         if not self.top:
