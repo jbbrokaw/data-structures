@@ -33,19 +33,19 @@ class DoublyLinkedList(LinkedList):
 
     def append(self, data):
         if not self.tail:  # Nothing in the list
-            self.tail = DoubleNode(data)
+            self.tail = DoubleNode(content=data)
             self.head = self.tail
         else:
-            self.tail.next = DoubleNode(data, next=None, previous=self.tail)
+            self.tail.next = DoubleNode(content=data, next=None, previous=self.tail)
             self.tail = self.tail.next
 
     def pop(self):
-        val = LinkedList.pop(self)  # This will remove the head
+        value = LinkedList.pop(self)  # This will remove the head
         if self.head:  # If there's still something in the list
             self.head.previous = None  # We have to remove this
         else:  # Nothing in the list anymore
             self.tail = None  # So we remove tail, too
-        return val
+        return value
 
     def shift(self):
         if self.tail:

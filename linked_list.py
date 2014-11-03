@@ -14,9 +14,9 @@ class LinkedList(object):
 
     def insert(self, data):
         if not self.head:
-            self.head = Node(data)
+            self.head = Node(content=data)
         else:
-            self.head = Node(data, self.head)
+            self.head = Node(content=data, next=self.head)
 
     def size(self):
         s = 0
@@ -26,11 +26,11 @@ class LinkedList(object):
             node = node.next
         return s
 
-    def search(self, val):
+    def search(self, value):
         if not self.head:
             return None
         node = self.head
-        while node.content != val:
+        while node.content != value:
             node = node.next
             if not node:
                 break
