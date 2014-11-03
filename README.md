@@ -39,3 +39,14 @@ Data Structures
     * A test.dot will be saved automatically if bst.py is run (if __name__ == "__main__")
     * Has four traversal methods that return generators (in-order, post-order, pre-order, & breadth_first)
     * All functions tested with pytest
+  9. Simple Graph
+    * A basic graph with nodes & edges
+    * graph.nodes(): returns a list of all nodes in the graph
+    * graph.edges(): returns a list of all edges in the graph
+    * graph.add_node(n): adds a new node 'n' to the graph
+    * graph.add_edge(n1, n2): adds a new edge to the graph connecting 'n1' and 'n2', if either n1 or n2 are not already present in the graph, they should be added.
+    * graph.del_node(n): deletes the node 'n' from the graph, raises an error if no such node exists
+    * graph.del_edge(n1, n2): deletes the edge connecting 'n1' and 'n2' from the graph, raises an error if no such edge exists
+    * graph.has_node(n): True if node 'n' is contained in the graph, False if not.
+    * graph.neighbors(n): returns the list of all nodes connected to 'n' by edges, raises an error if n is not in g
+    * graph.adjacent(n1, n2): returns True if there is an edge connecting n1 and n2, False if not, raises an error if either of the supplied nodes are not in g
