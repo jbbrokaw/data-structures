@@ -102,3 +102,62 @@ class Graph(object):
                ((node1 == edge.node2) and (node2 == edge.node1)):
                 return True
         return False
+
+    def _DFT(self, start_node, path):
+        start_node.discovered = True
+        path.append(start_node.value)
+        for nodeval in self.neighbors(start_node.value):
+            neighbor = self._node_list[self.nodes().index(nodeval)]
+            if not neighbor.discovered:
+                self._DFT(neighbor, path)
+                path.append(start_node.value)
+
+    def depth_first_traversal(self, start_nodeval):
+        for node in self._node_list:
+            node.discovered = False
+        start_node = self._node_list[self.nodes().index(start_nodeval)]
+        path = []
+        self._DFT(start_node, path)
+        return path
+
+    def breadth_first_traversal(self, start_nodeval):
+        for node in self._node_list:
+            node.discovered = False
+        start_node = self._node_list[self.nodes().index(start_nodeval)]
+        path = []
+        from queue import Queue  # My implementation from earlier
+        queue = Queue()
+        start_node.discovered = True
+        queue.enqueue(start_node)
+        while True:
+            try:
+                next_node = queue.dequeue()
+            except IndexError:
+                break
+            path.append(next_node.value)
+            for nodeval in self.neighbors(next_node.value):
+                neighbor = self._node_list[self.nodes().index(nodeval)]
+                if not neighbor.discovered:
+                    neighbor.discovered = True
+                    queue.enqueue(neighbor)
+
+        return path
+
+
+if __name__ == '__main__':
+    graph = Graph()
+
+    graph.add_edge(1, 2)  # .   1
+    graph.add_edge(1, 3)  # . / | \
+    graph.add_edge(1, 4)  # .2--3  4
+    graph.add_edge(2, 3)  # .|  |
+    graph.add_edge(2, 5)  # .5--6
+    graph.add_edge(5, 6)
+    graph.add_edge(3, 6)
+
+    print graph.depth_first_traversal(3)
+    print "Depth first, should have been",\
+          [3, 1, 2, 5, 6, 5, 2, 1, 4, 1, 3]
+    print graph.breadth_first_traversal(3)
+    print "Breadth first, should have been",\
+          [3, 1, 2, 6, 4, 5]

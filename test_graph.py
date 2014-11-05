@@ -270,3 +270,68 @@ def test_adjacent():
     with pytest.raises(ValueError) as err:
         graph.adjacent("node3", "node5")
         assert "must be in graph" in err.value
+
+
+def test_depth_first():
+    """g.depth_first_traversal(start): Perform a full depth-first traversal of
+    the graph beginning at start. Return the full visited path when traversal
+    is complete."""
+    graph = Graph()
+    with pytest.raises(TypeError):
+        graph.depth_first_traversal()  # Starting node required
+
+    graph.add_edge(1, 2)  # .   1
+    graph.add_edge(1, 3)  # . / | \
+    graph.add_edge(1, 4)  # .2--3  4
+    graph.add_edge(2, 3)  # .|  |
+    graph.add_edge(2, 5)  # .5--6
+    graph.add_edge(5, 6)
+    graph.add_edge(3, 6)
+    with pytest.raises(ValueError):
+        graph.depth_first_traversal("node1")
+
+    path = graph.depth_first_traversal(1)
+    print path
+    assert path[0] == 1
+    assert 2 in path
+    assert 3 in path
+    assert 4 in path
+    assert 5 in path
+    assert 6 in path
+    # Chooses based on order in which edges were added
+    assert path == [1, 2, 3, 6, 5, 6, 3, 2, 1, 4, 1]
+    path = graph.depth_first_traversal(6)
+    assert path == [6, 5, 2, 1, 3, 1, 4, 1, 2, 5, 6]
+
+
+def test_breadth_first():
+    """g.breadth_first_traversal(start): Perform a full breadth-first traversal
+    of the graph, beginning at start. Return the full visited path when
+    traversal is complete."""
+    graph = Graph()
+    with pytest.raises(TypeError):
+        graph.depth_first_traversal()  # Starting node required
+
+    graph.add_edge(1, 2)  # .   1
+    graph.add_edge(1, 3)  # . / | \
+    graph.add_edge(1, 4)  # .2--3  4
+    graph.add_edge(2, 3)  # .|  |
+    graph.add_edge(2, 5)  # .5--6
+    graph.add_edge(5, 6)
+    graph.add_edge(3, 6)
+    with pytest.raises(ValueError):
+        graph.breadth_first_traversal("node1")
+
+    path = graph.breadth_first_traversal(1)
+    print path
+    assert path[0] == 1
+    assert 2 in path
+    assert 3 in path
+    assert 4 in path
+    assert 5 in path
+    assert 6 in path
+    # Chooses based on order in which edges were added
+    assert path == [1, 2, 3, 4, 5, 6]
+
+    path = graph.breadth_first_traversal(6)
+    assert path == [6, 5, 3, 2, 1, 4]
