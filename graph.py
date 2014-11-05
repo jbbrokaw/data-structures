@@ -155,8 +155,15 @@ if __name__ == '__main__':
     graph.add_edge(5, 6)
     graph.add_edge(3, 6)
 
+    print """
+                1
+              / | \\
+             2--3  4
+             |  |
+             5--6"""
+
     print graph.depth_first_traversal(3)
-    print "Depth first, should have been",\
+    print "Depth first from 3, should have been",\
           [3, 1, 2, 5, 6, 5, 2, 1, 4, 1, 3]
     print graph.breadth_first_traversal(3)
     print "Breadth first, should have been",\
