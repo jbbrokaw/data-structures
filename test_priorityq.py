@@ -51,11 +51,11 @@ def test_insert():
 
 def test_peek():
     bin = p.PriorityQueue()
-    bin.insert((0, "zero"))        #        1
+    bin.insert((0, "zero"))  # .            1
     assert bin.peek() == "zero"
-    bin.insert((1, "one"))         #       / \
+    bin.insert((1, "one"))  # .            / \
     assert bin.peek() == "one"
-    bin.insert((-1, "minus one"))  #      0  -1
+    bin.insert((-1, "minus one"))  # .    0  -1
 
     assert bin.peek() == "one"
     assert bin._data[0] == (1, "one")
@@ -72,7 +72,7 @@ def test_pop():
     for j in xrange(10):
         higher = bin.pop()
         lower = bin.pop()
-        assert float(higher) > float(lower)
+        assert float(higher[1]) > float(lower[1])
 
     with pytest.raises(IndexError):
         bin.pop()

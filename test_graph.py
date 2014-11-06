@@ -344,3 +344,96 @@ def test_edge_weights():
     graph.add_edge(1, 3, weight=2)
     assert graph._edge_list[0].weight == 5
     assert graph._edge_list[1].weight == 2
+
+
+def test_dijkstra():
+    """g.dijkstra(a, b) returns (distance, [a, ..., b]) for shortest path from
+    a to b determined using the dijkstra algorithm"""
+    graph = Graph()
+    with pytest.raises(TypeError):
+        graph.dijkstra()  # Starting & ending nodes required
+    with pytest.raises(TypeError):
+        graph.dijkstra(1)  # Starting & ending nodes required
+
+    graph.add_edge(1, 2, weight=1)  # . w1  1
+    graph.add_edge(1, 3, weight=3)  # .  /  |-w3 \-w1
+    graph.add_edge(1, 4, weight=1)  # .2 -- 3     4
+    graph.add_edge(2, 3, weight=1)  # .| w1 |-w1
+    graph.add_edge(2, 5, weight=2)  # .|-w2 |
+    graph.add_edge(5, 6, weight=2)  # .5 -- 6
+    graph.add_edge(3, 6, weight=1)  # .  w2
+
+    path1_6 = graph.dijkstra(1, 6)
+    assert path1_6[0] == 3
+    assert path1_6[1] == [1, 2, 3, 6]
+
+
+def test_astar_distance():
+    """The A* algorithm requires an estimate of the distance to the goal, so
+    I have generalized the node to take some coordinates, which are then used
+    by astar to guess the remaining distance"""
+    graph = Graph()
+    with pytest.raises(TypeError):
+        graph.astar_distance()  # Starting & ending nodes required
+    with pytest.raises(TypeError):
+        graph.astar_distance(1)  # Starting & ending nodes required
+
+    graph.add_node(1, coordinates=(1, 0))
+    graph.add_node(2, coordinates=(0, 1))
+    graph.add_node(3, coordinates=(1, 1))
+    graph.add_node(4, coordinates=(2, 1))
+    graph.add_node(5, coordinates=(0, 2))
+    graph.add_node(6, coordinates=(1, 2))
+    # Where x goes left-right and y goes top-bottom
+    graph.add_edge(1, 2, weight=1)  # . w1  1
+    graph.add_edge(1, 3, weight=3)  # .  /  |-w3 \-w1
+    graph.add_edge(1, 4, weight=1)  # .2 -- 3     4
+    graph.add_edge(2, 3, weight=1)  # .| w1 |-w1
+    graph.add_edge(2, 5, weight=2)  # .|-w2 |
+    graph.add_edge(5, 6, weight=2)  # .5 -- 6
+    graph.add_edge(3, 6, weight=1)  # .  w2
+
+    path1_6 = graph.astar_distance(1, 6)
+    assert path1_6[0] == 3
+    assert path1_6[1] == [1, 2, 3, 6]
+
+    ## Now let's do an airport example, where the actual distance is the
+    # distance plus a penalty for a layover
+    penalty = 1
+    # SEA (1,1) -----------\
+    #  |       \            ORD(5,2)
+    #  |        \           /      \
+    # SFO (1,4)  \         /        \
+    #   \         \       /         |
+    #    --------\ \     /          |
+    #              DFW (4,6)        |
+    #                   \           |
+    #                    ------     |
+    #                          \    |
+    #                           MIA (8, 8)
+    # It should arrive at a good solution faster than dijkstra, since it'll
+    # go straight to DFW since it's more in the right direction.
+    graph = Graph()
+    graph.add_node("SEA", coordinates=(1, 1))
+    graph.add_node("ORD", coordinates=(5, 2))
+    graph.add_node("SFO", coordinates=(1, 4))
+    graph.add_node("DFW", coordinates=(4, 6))
+    graph.add_node("MIA", coordinates=(8, 8))
+
+    graph.add_edge("SEA", "SFO",
+                   weight=graph._calculate_distance((1, 1), (1, 4)) + penalty)
+    graph.add_edge("SEA", "ORD",
+                   weight=graph._calculate_distance((1, 1), (5, 2)) + penalty)
+    graph.add_edge("SEA", "DFW",
+                   weight=graph._calculate_distance((1, 1), (4, 6)) + penalty)
+    graph.add_edge("ORD", "DFW",
+                   weight=graph._calculate_distance((5, 2), (4, 6)) + penalty)
+    graph.add_edge("SFO", "DFW",
+                   weight=graph._calculate_distance((1, 4), (4, 6)) + penalty)
+    graph.add_edge("DFW", "MIA",
+                   weight=graph._calculate_distance((4, 6), (8, 8)) + penalty)
+    graph.add_edge("ORD", "MIA",
+                   weight=graph._calculate_distance((5, 2), (8, 8)) + penalty)
+
+    path = graph.astar_distance("SEA", "MIA")
+    assert path[1] == ["SEA", "DFW", "MIA"]

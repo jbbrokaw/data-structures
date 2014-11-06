@@ -30,6 +30,5 @@ class PriorityQueue(Binheap):
         return self._data[0][1]  # Raises IndexError if not there, as intended
 
     def pop(self):
-        """Return highest priority value in queue (without attached
-        priority)"""
-        return Binheap.pop(self)[1]
+        """Return highest priority value in queue (with attached priority)"""
+        return Binheap.pop(self)

@@ -30,14 +30,19 @@ class Graph(object):
         self._node_list = []
         self._edge_list = []
 
-    def add_node(self, nodeval):
-        """insert node into the graph"""
+    def add_node(self, nodeval, coordinates=None):
+        """insert node into the graph, possibly with coordinates"""
         node = Node(nodeval)
+        if coordinates:
+            node.coordinates = coordinates
         if node not in self._node_list:
             self._node_list.append(node)
 
     def add_edge(self, node1val, node2val, weight=None):
-        """Insert edge between node1 & node2, add nodes if not present"""
+        """Insert edge between node1 & node2, add nodes if not present.
+        Accepts a weight, which is added only if provided (do this
+        carefully and consistently; no real way to change it has been
+        implemented)"""
         node1 = Node(node1val)
         node2 = Node(node2val)
         if node1 not in self._node_list:
@@ -47,7 +52,7 @@ class Graph(object):
             self.add_node(node2val)
 
         newedge = Edge(node1val, node2val)
-        if weight:
+        if weight:  # on the user to add weights consistently
             newedge.weight = weight
         if newedge not in self._edge_list:
             self._edge_list.append(newedge)
@@ -145,6 +150,90 @@ class Graph(object):
 
         return path
 
+    def dijkstra(self, startnodeval, endnodeval):
+        from priorityq import PriorityQueue
+        p_queue = PriorityQueue(prop="min")
+        best_solution = None
+        p_queue.insert((0, [startnodeval]))
+        while True:
+            try:
+                current = p_queue.pop()
+            except IndexError:
+                break
+
+            if current[1][-1] == endnodeval:
+                if (not best_solution) or (current[0] < best_solution[0]):
+                    best_solution = current
+                    continue
+
+            for neighbor in self.neighbors(current[1][-1]):
+                if neighbor not in current[1]:
+                    distance = self._edge_list[
+                        self._edge_list.index(Edge(current[1][-1], neighbor))
+                    ].weight
+                    p_queue.insert((current[0] + distance,
+                                    current[1] + [neighbor]))
+
+        return best_solution
+
+    def _calculate_distance(self, coords1, coords2):
+        from math import sqrt
+        d_squared = 0
+        for r1, r2 in coords1, coords2:
+            d_squared += (r2 - r1) ** 2
+
+        return sqrt(d_squared)
+
+    def astar_distance(self, startnodeval, endnodeval):
+        from priorityq import PriorityQueue
+        p_queue = PriorityQueue(prop="min")
+        best_solution = None
+        endnode = self._node_list[self._node_list.index(
+                                  Node(endnodeval)
+                                  )]
+        startnode = self._node_list[self._node_list.index(
+                                    Node(startnodeval)
+                                    )]
+        distance_traveled = 0
+        remaining_distance_estimate = self._calculate_distance(
+            startnode.coordinates,
+            endnode.coordinates)
+
+        # We need to keep track of the real distance traveled, along with
+        # the "estimate", so the things in the queue now look like:
+        # (priority, (distance_traveled, [path]))
+        priority = distance_traveled + remaining_distance_estimate
+        p_queue.insert((priority, (distance_traveled, [startnodeval])))
+
+        while True:
+            try:
+                current = p_queue.pop()
+            except IndexError:
+                break
+
+            if current[1][1][-1] == endnodeval:
+                if (not best_solution) or (current[1][0] < best_solution[0]):
+                    best_solution = current[1]
+                    continue
+
+            for neighbor in self.neighbors(current[1][1][-1]):
+                if neighbor not in current[1][1]:
+                    new_distance = self._edge_list[
+                        self._edge_list.index(
+                            Edge(current[1][1][-1], neighbor))
+                    ].weight
+                    distance_traveled = current[1][0] + new_distance
+                    newnode = self._node_list[self._node_list.index(
+                        Node(neighbor))]
+                    remaining_distance_estimate = self._calculate_distance(
+                        newnode.coordinates, endnode.coordinates)
+                    priority = distance_traveled + remaining_distance_estimate
+
+                    p_queue.insert((priority,
+                                    (distance_traveled,
+                                     current[1][1] + [neighbor])))
+
+        return best_solution
 
 if __name__ == '__main__':
     graph = Graph()
