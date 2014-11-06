@@ -36,7 +36,7 @@ class Graph(object):
         if node not in self._node_list:
             self._node_list.append(node)
 
-    def add_edge(self, node1val, node2val):
+    def add_edge(self, node1val, node2val, weight=None):
         """Insert edge between node1 & node2, add nodes if not present"""
         node1 = Node(node1val)
         node2 = Node(node2val)
@@ -47,6 +47,8 @@ class Graph(object):
             self.add_node(node2val)
 
         newedge = Edge(node1val, node2val)
+        if weight:
+            newedge.weight = weight
         if newedge not in self._edge_list:
             self._edge_list.append(newedge)
 

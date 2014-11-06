@@ -335,3 +335,12 @@ def test_breadth_first():
 
     path = graph.breadth_first_traversal(6)
     assert path == [6, 5, 3, 2, 1, 4]
+
+
+def test_edge_weights():
+    """Edges can be weighted"""
+    graph = Graph()
+    graph.add_edge(1, 2, weight=5)
+    graph.add_edge(1, 3, weight=2)
+    assert graph._edge_list[0].weight == 5
+    assert graph._edge_list[1].weight == 2
