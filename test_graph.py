@@ -344,3 +344,55 @@ def test_edge_weights():
     graph.add_edge(1, 3, weight=2)
     assert graph._edge_list[0].weight == 5
     assert graph._edge_list[1].weight == 2
+
+
+def test_dijkstra():
+    """g.dijkstra(a, b) returns (distance, [a, ..., b]) for shortest path from
+    a to b determined using the dijkstra algorithm"""
+    graph = Graph()
+    with pytest.raises(TypeError):
+        graph.dijkstra()  # Starting & ending nodes required
+    with pytest.raises(TypeError):
+        graph.dijkstra(1)  # Starting & ending nodes required
+
+    graph.add_edge(1, 2, weight=1)  # . w1  1
+    graph.add_edge(1, 3, weight=3)  # .  /  |-w3 \-w1
+    graph.add_edge(1, 4, weight=1)  # .2 -- 3     4
+    graph.add_edge(2, 3, weight=1)  # .| w1 |-w1
+    graph.add_edge(2, 5, weight=2)  # .|-w2 |
+    graph.add_edge(5, 6, weight=2)  # .5 -- 6
+    graph.add_edge(3, 6, weight=1)  # .  w2
+
+    path1_6 = graph.dijkstra(1, 6)
+    assert path1_6[0] == 3
+    assert path1_6[1] == [1, 2, 3, 6]
+
+
+def test_astar_distance():
+    """The A* algorithm requires an estimate of the distance to the goal, so
+    I have generalized the node to take some coordinates, which are then used
+    by astar to guess the remaining distance"""
+    graph = Graph()
+    with pytest.raises(TypeError):
+        graph.astar_distance()  # Starting & ending nodes required
+    with pytest.raises(TypeError):
+        graph.astar_distance(1)  # Starting & ending nodes required
+
+    graph.add_node(1, coordinates=(1, 0))
+    graph.add_node(2, coordinates=(0, 1))
+    graph.add_node(3, coordinates=(1, 1))
+    graph.add_node(4, coordinates=(2, 1))
+    graph.add_node(5, coordinates=(0, 2))
+    graph.add_node(6, coordinates=(1, 2))
+
+    graph.add_edge(1, 2, weight=1)  # . w1  1
+    graph.add_edge(1, 3, weight=3)  # .  /  |-w3 \-w1
+    graph.add_edge(1, 4, weight=1)  # .2 -- 3     4
+    graph.add_edge(2, 3, weight=1)  # .| w1 |-w1
+    graph.add_edge(2, 5, weight=2)  # .|-w2 |
+    graph.add_edge(5, 6, weight=2)  # .5 -- 6
+    graph.add_edge(3, 6, weight=1)  # .  w2
+
+    path1_6 = graph.astar_distance(1, 6)
+    assert path1_6[0] == 3
+    assert path1_6[1] == [1, 2, 3, 6]
