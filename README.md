@@ -54,4 +54,10 @@ Data Structures
     * g.breadth_first_traversal(start): Perform a full breadth-first traversal of the graph, beginning at start. Return the full visited path when traversal is complete.
     * g.dijkstra(start, end): Return the distance and shortest path from start node to end node
     * g.astar_distance(start, end): Given coordinates on the nodes, uses the A* algorithm to heuristically pick what is likely the best path (in the direction toward the end node); otherwise identical to dijkstra. This is obviously useful when arriving at a good solution faster is desired; the exhaustive search is actually slower because of the distance calculation overhead.
-
+  10. Hash Table
+    * Uses a fairly simple rotating hash function 
+    * Buckets are used in each address to handle collisions
+    * Only strings can be used as keys
+    * get(key) returns the value stored with the given key
+    * set(key, val) stores the given val using the given key
+    * hash(key) hashes the key provided
