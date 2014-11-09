@@ -52,3 +52,6 @@ Data Structures
     * graph.adjacent(n1, n2): returns True if there is an edge connecting n1 and n2, False if not, raises an error if either of the supplied nodes are not in g
     * g.depth_first_traversal(start): Perform a full depth-first traversal of the graph beginning at start. Return the full visited path when traversal is complete.
     * g.breadth_first_traversal(start): Perform a full breadth-first traversal of the graph, beginning at start. Return the full visited path when traversal is complete.
+    * g.dijkstra(start, end): Return the distance and shortest path from start node to end node
+    * g.astar_distance(start, end): Given coordinates on the nodes, uses the A* algorithm to heuristically pick what is likely the best path (in the direction toward the end node); otherwise identical to dijkstra. This is obviously useful when arriving at a good solution faster is desired; the exhaustive search is actually slower because of the distance calculation overhead.
+
