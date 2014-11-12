@@ -477,3 +477,30 @@ def test_breadth_first_traversal():
 
     with pytest.raises(StopIteration):
         gen.next()
+
+
+def test_rebalance():
+    """Tests my rebalancing algorithm"""
+    bintree = BST()
+
+    for i in xrange(100):
+        bintree.insert(random.randint(0, 1e6))
+    assert bintree.size() == 100
+
+    original_depth = bintree.depth()
+
+    bintree.rebalance()
+    assert abs(bintree.balance()) < 2
+    assert original_depth > bintree.depth()
+
+    bintree = BST()
+
+    for i in xrange(100):
+        bintree.insert(i)  # Horribly unbalanced
+    assert bintree.size() == 100
+    assert bintree.depth() == 100
+    assert bintree.balance() == -99
+
+    bintree.rebalance()
+    assert abs(bintree.balance()) < 2
+    assert bintree.depth() < 10  # Much better, anyway
