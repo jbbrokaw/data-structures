@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-import random
 
 
 class BST(object):
@@ -192,37 +191,37 @@ class BST(object):
             return
         return self.leftchild.delete(val, parent=self)
 
-    def _gen_in_order(self):
+    def in_order(self):
         if self.leftchild:
-            for i in self.leftchild._gen_in_order():
+            for i in self.leftchild.in_order():
                 yield i
 
         if not self._EMPTY:
             yield self.value
 
         if self.rightchild:
-            for i in self.rightchild._gen_in_order():
+            for i in self.rightchild.in_order():
                 yield i
 
-    def _gen_pre_order(self):
+    def pre_order(self):
         if not self._EMPTY:
             yield self.value
 
         if self.leftchild:
-            for i in self.leftchild._gen_pre_order():
+            for i in self.leftchild.pre_order():
                 yield i
 
         if self.rightchild:
-            for i in self.rightchild._gen_pre_order():
+            for i in self.rightchild.pre_order():
                 yield i
 
-    def _gen_post_order(self):
+    def post_order(self):
         if self.leftchild:
-            for i in self.leftchild._gen_post_order():
+            for i in self.leftchild.post_order():
                 yield i
 
         if self.rightchild:
-            for i in self.rightchild._gen_post_order():
+            for i in self.rightchild.post_order():
                 yield i
 
         if not self._EMPTY:
@@ -241,27 +240,31 @@ class BST(object):
                 for val in self.rightchild._gen_level(level - 1):
                     yield val
 
-    def _gen_breadth_first(self):
+    def breadth_first(self):
         for level in xrange(self.depth()):
             for val in self._gen_level(level):
                 yield val
 
-    def in_order(self):
-        """Return a generator of values in the tree using in-order traversal"""
-        return self._gen_in_order()
+    def _rebalance(self, parent=None):
+        # Since deletion is done so as to help preserve balance,
+        # delete & reinsert until we're good
+        bal = self.balance()
+        if abs(bal) > 1:
+            val = self.value
+            self.delete(val, parent)
+            return val
+        val = None
+        if self.leftchild:
+            val = self.leftchild._rebalance(parent=self)
+        if (val is None) and self.rightchild:
+            val = self.rightchild._rebalance(parent=self)
+        return val
 
-    def pre_order(self):
-        """Return a generator of values in the tree using pre-order
-        traversal"""
-        return self._gen_pre_order()
-
-    def post_order(self):
-        """Return a generator of values in the tree using post-order
-        traversal"""
-        return self._gen_post_order()
-
-    def breadth_first(self):
-        return self._gen_breadth_first()
+    def rebalance(self):
+        deleted_value = self._rebalance()
+        while deleted_value is not None:
+            self.insert(deleted_value)
+            deleted_value = self._rebalance()
 
     def get_dot(self):
         """return the tree with root 'self' as a dot graph for visualization"""
@@ -273,6 +276,7 @@ class BST(object):
 
     def _get_dot(self):
         """recursively prepare a dot graph entry for this node."""
+        import random
         if self.leftchild:
             yield "\t%s -> %s;" % (self.value, self.leftchild.value)
             for i in self.leftchild._get_dot():
@@ -290,14 +294,19 @@ class BST(object):
             yield "\tnull%s [shape=point];" % r
             yield "\t%s -> null%s;" % (self.value, r)
 
+    def update_dot(self):
+        import io
+        dotfile = io.open("test.dot", "w")
+        dotfile.write(self.get_dot())
+        dotfile.close()
+
 
 if __name__ == '__main__':
-    # Setup for testing
-    import io
+    import random
+    # Setup for visualization
     bintree = BST()
-    for i in xrange(30):
-        bintree.insert(random.randint(0, 1e3))
-    assert bintree.size() == 30
-    dotfile = io.open("test.dot", "w")
-    dotfile.write(bintree.get_dot())
-    dotfile.close()
+    for i in xrange(50):
+        bintree.insert(random.randint(0, 1e4))
+    assert bintree.size() == 50
+    bintree.update_dot()
+    print "Balance = ", bintree.balance()
