@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-import random
 
 
 class BST(object):
@@ -277,6 +276,7 @@ class BST(object):
 
     def _get_dot(self):
         """recursively prepare a dot graph entry for this node."""
+        import random
         if self.leftchild:
             yield "\t%s -> %s;" % (self.value, self.leftchild.value)
             for i in self.leftchild._get_dot():
@@ -294,15 +294,19 @@ class BST(object):
             yield "\tnull%s [shape=point];" % r
             yield "\t%s -> null%s;" % (self.value, r)
 
+    def update_dot(self):
+        import io
+        dotfile = io.open("test.dot", "w")
+        dotfile.write(self.get_dot())
+        dotfile.close()
+
 
 if __name__ == '__main__':
-    # Setup for testing
-    import io
+    import random
+    # Setup for visualization
     bintree = BST()
     for i in xrange(50):
         bintree.insert(random.randint(0, 1e4))
     assert bintree.size() == 50
-    dotfile = io.open("test.dot", "w")
-    dotfile.write(bintree.get_dot())
-    dotfile.close()
-    print bintree.balance()
+    bintree.update_dot()
+    print "Balance = ", bintree.balance()
