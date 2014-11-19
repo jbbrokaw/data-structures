@@ -26,10 +26,11 @@ def test_input():
 
 def test_sorting():
     import random
-    datalist = []
-    for i in xrange(100):
-        datalist.append(random.randint(0, 1e8))
+    datalist = [random.randint(0, 1e8) for i in xrange(100)]
+
+    insertion_sort(datalist)
+
     previous = datalist[0]
     for i in datalist[1:]:
-        assert previous < i
-        previous = 1
+        assert previous <= i
+        previous = i
