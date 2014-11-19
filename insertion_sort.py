@@ -9,20 +9,22 @@ def insertion_sort(datalist):
             datalist[j - 1], datalist[j] = datalist[j], datalist[j - 1]
             j -= 1
 
+
 if __name__ == '__main__':
-    import random
     import timeit
+    cases = {'ordered': 'testlist = range(%d)',
+             'random': 'import random; ' +
+             'testlist = [random.randint(0, 1e6) for i in xrange(%d)]',
+             'reversed': 'testlist = range(%d, 0, -1)'}
 
-    def fill_and_sort(n=100):
-        datalist = []
-        for i in xrange(n):
-            datalist.append(random.randint(0, 1e8))
-        insertion_sort(datalist)
+    pattern = """
+On average, filling & sorting an array of %d %s numbers takes %e s"""
 
-    pattern = "On average, filling & sorting an array of %d numbers takes %e s"
-
-    for i in xrange(6, 11):
-        print pattern % (2 ** i, timeit.timeit(
-            "fill_and_sort(%d)" % 2 ** i,
-            setup="from __main__ import fill_and_sort",
-            number=100) / 100.)
+    for case in cases:
+        for i in xrange(6, 12):
+            length = 2 ** i
+            print pattern % (length, case, timeit.timeit(
+                "insertion_sort(testlist)",
+                setup="from __main__ import insertion_sort;" +
+                (cases[case] % length),
+                number=10) / 10.)
