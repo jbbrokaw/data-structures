@@ -36,12 +36,26 @@ class RedBlackTree(BST):
         self.leftchild.insert(val, parent=self)
         return
 
-    def _grandparent(self):
+    @property
+    def grandparent(self):
         """Return the grandparent of this node, or None if doesn't exist"""
         if self.parent:
             return self.parent.parent
         return None
 
+    @property
+    def uncle(self):
+        """Return the uncle node, or None if it doesn't exist"""
+        if self.grandparent is None:
+            return None
+        if self.parent is self.grandparent.leftchild:
+            return self.grandparent.rightchild
+        return self.grandparent.leftchild
+
     def _enforce_red_black_constraints(self):
         """Determine which case we are in and repaint/rotate accordingly"""
-        pass
+        # Note that we know parent exists, since we already handled the head case"""
+        if self.parent.color is BLACK:
+            # Everything is fine
+            return
+

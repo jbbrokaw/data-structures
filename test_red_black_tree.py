@@ -28,10 +28,26 @@ def test_preliminary_insert():
 def test_grandparent():
     rbt = RedBlackTree()
     assert rbt.parent is None
-    assert rbt._grandparent() is None
+    assert rbt.grandparent is None
     rbt.insert(10)
     rbt.insert(11)
     rbt.insert(12)
-    assert rbt.rightchild._grandparent() is None
-    assert rbt.rightchild.rightchild._grandparent() is rbt
+    assert rbt.rightchild.grandparent is None
+    assert rbt.rightchild.rightchild.grandparent is rbt
 
+def test_uncle():
+    rbt = RedBlackTree()
+    assert rbt.uncle is None
+    rbt.insert(10)  # .    10
+    rbt.insert(12)  # .   /  \
+    rbt.insert(11)  # .  8   12
+    rbt.insert(13)  # . / \  / \
+    rbt.insert(8)  # . 7  9 11  13
+    rbt.insert(7)
+    rbt.insert(9)
+    assert rbt.rightchild.uncle is None
+    assert rbt.leftchild.uncle is None
+    assert rbt.rightchild.rightchild.uncle.value == 8
+    assert rbt.rightchild.leftchild.uncle.value == 8
+    assert rbt.leftchild.rightchild.uncle.value == 12
+    assert rbt.leftchild.leftchild.uncle.value == 12
