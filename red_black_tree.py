@@ -10,14 +10,15 @@ class RedBlackTree(BST):
         self.color = BLACK
         BST.__init__(self)
 
-    def _preliminary_insert(self, val, parent=None):
+    def insert(self, val, parent=None):
         """insert val into the BST (normally) and color it red"""
         if self._EMPTY:
             self.value = val
             self._EMPTY = False
             self.parent = parent
-            if self.parent:  # Otherwise it's the root & stays black
+            if self.parent:  # Otherwise it's the root & just stays black
                 self.color = RED
+                self._enforce_red_black_constraints()
             return
 
         if val == self.value:
@@ -26,13 +27,13 @@ class RedBlackTree(BST):
         if val > self.value:
             if not self.rightchild:
                 self.rightchild = RedBlackTree()  # Make a subtree
-            self.rightchild._preliminary_insert(val, parent=self)
+            self.rightchild.insert(val, parent=self)
             return
 
         # If we get here it goes left
         if not self.leftchild:
             self.leftchild = RedBlackTree()  # Make a subtree
-        self.leftchild._preliminary_insert(val, parent=self)
+        self.leftchild.insert(val, parent=self)
         return
 
     def _grandparent(self):
@@ -40,3 +41,7 @@ class RedBlackTree(BST):
         if self.parent:
             return self.parent.parent
         return None
+
+    def _enforce_red_black_constraints(self):
+        """Determine which case we are in and repaint/rotate accordingly"""
+        pass
