@@ -54,8 +54,25 @@ class RedBlackTree(BST):
 
     def _enforce_red_black_constraints(self):
         """Determine which case we are in and repaint/rotate accordingly"""
-        # Note that we know parent exists, since we already handled the head case"""
+        if self.parent is None:
+            # We are the root
+            self.color = BLACK
+            return
+
         if self.parent.color is BLACK:
             # Everything is fine
             return
 
+        if (self.parent.color is RED) and ((self.uncle is None) or
+                                           (self.uncle.color is RED)):
+            self.parent.color = BLACK
+            if self.uncle:
+                self.uncle.color = BLACK
+            self.grandparent._enforce_red_black_constraints()
+            return
+
+        if (((self.grandparent.leftchild is not None) and
+            (self is self.grandparent.leftchild.leftchild)) or
+                ((self.grandparent.rightchild is not None) and
+                 (self is self.grandparent.rightchild.rightchild))):
+            return
