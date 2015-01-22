@@ -31,6 +31,7 @@ def test_grandparent():
     assert rbt.grandparent is None
     rbt.insert(10)
     rbt.insert(11)
+    rbt.insert(9)
     rbt.insert(12)
     assert rbt.rightchild.grandparent is None
     assert rbt.rightchild.rightchild.grandparent is rbt
@@ -40,10 +41,10 @@ def test_uncle():
     assert rbt.uncle is None
     rbt.insert(10)  # .    10
     rbt.insert(12)  # .   /  \
-    rbt.insert(11)  # .  8   12
+    rbt.insert(8)  # .   8   12
     rbt.insert(13)  # . / \  / \
-    rbt.insert(8)  # . 7  9 11  13
-    rbt.insert(7)
+    rbt.insert(7)  # . 7  9 11  13
+    rbt.insert(11)
     rbt.insert(9)
     assert rbt.rightchild.uncle is None
     assert rbt.leftchild.uncle is None
@@ -62,20 +63,7 @@ def test_cases_one_through_three():
     assert rbt.color is BLACK
     assert rbt.rightchild.color is RED
 
-    # Case 3A, parent is red, uncle doesn't exist
-    rbt.insert(11)
-    # 10(B)
-    # . \
-    # . 12(B)
-    # . /
-    # 11(R)
-    child = rbt.rightchild.leftchild
-    assert child.color is RED
-    assert rbt.rightchild is child.parent
-    assert child.parent.color is BLACK
-    assert rbt.color is BLACK
-
-    # Case 3B, parent and uncle are both RED
+    # Case 3, parent and uncle are both RED
     rbt = RedBlackTree()
     rbt.insert(10)
     rbt.insert(8)
@@ -93,3 +81,22 @@ def test_cases_one_through_three():
     assert child.uncle is rbt.leftchild
     assert child.uncle.color is BLACK
     assert rbt.color is BLACK
+
+
+def test_cases_four_and_five():
+    rbt = RedBlackTree()
+    rbt.insert(10)
+    rbt.insert(12)
+    rbt.insert(11)
+    # Origin      Rotate for case 4   Rotate again Case 5
+    # 10(B)     |    10(B)          |      11(B)
+    # . \       |       \           |     /   \
+    # . 12(R)   |       11(R)       |   10(R) 12(R)
+    # . /       |         \         |
+    # 11(R)     |         12(R)     |
+    assert rbt.color is BLACK
+    assert rbt.value == 11
+    assert rbt.leftchild.color is RED
+    assert rbt.leftchild.value == 10
+    assert rbt.rightchild.color is RED
+    assert rbt.rightchild.value == 12

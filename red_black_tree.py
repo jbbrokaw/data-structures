@@ -83,6 +83,7 @@ class RedBlackTree(BST):
         if self._EMPTY or (self.leftchild is None):
             raise ValueError("Attempt to rotate with missing nodes")
         new_rightchild = RedBlackTree()
+        new_rightchild.insert(self.value)
         new_rightchild.color = self.color
 
         new_rightchild.rightchild = self.rightchild
@@ -140,3 +141,10 @@ class RedBlackTree(BST):
 
         # CASE 5, parent is red, uncle black, we are
         # left/left or right/right from grandparent
+        self.parent.color = BLACK
+        self.grandparent.color = RED
+        if ((self.grandparent.rightchild is not None) and
+                (self.parent is self.grandparent.rightchild)):
+            self.grandparent._rotate_right()
+        else:
+            self.grandparent._rotate_left()
