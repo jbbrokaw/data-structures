@@ -121,18 +121,23 @@ def test_cases_four_and_five():
 
 def test_insertion():
     rbt = RedBlackTree()
-    for i in xrange(100):
+    for i in xrange(256):
         rbt.insert(random.randint(0, 1e6))
-    assert rbt.size() == 100
+    assert rbt.size() == 256
+    assert abs(rbt.balance()) <= 1
+    assert rbt.depth() <= 10
 
+    blacks = 0
     for j in traverse_nodes(rbt):
         # Test that all red nodes have black children (or None)
         if j.color is RED:
-            print j.value, j.rightchild, j.leftchild
             if j.leftchild:
                 assert j.leftchild.color is BLACK
             if j.rightchild:
                 assert j.rightchild.color is BLACK
-    # Something is wrong here.
 
-    # Test that all leaves (Nones) have the same number of blacks in their path
+        # Test that all leaves (Nones) have the same number of blacks
+        # in their paths
+        blacks = max([blacks, j.blacks])
+        if (j.leftchild is None) or (j.rightchild is None):
+            assert j.blacks == blacks

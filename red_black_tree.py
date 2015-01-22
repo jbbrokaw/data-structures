@@ -121,6 +121,7 @@ class RedBlackTree(BST):
             self.parent.color = BLACK
             if self.uncle:
                 self.uncle.color = BLACK
+            self.grandparent.color = RED
             self.grandparent._enforce_red_black_constraints()
             return
 
