@@ -60,6 +60,8 @@ Data Structures
     * hash(key) hashes the key provided
   10. AVL Tree
     * Binary search tree which incorporates the AVL rebalancing algorith on insertion and deletion
+  11. Red-Black Tree
+    * Binary search tree which incorporates the red-black rebalancing algorithm on insertion
 
 
 ## Algorithms:
