@@ -9,7 +9,25 @@ from __future__ import unicode_literals
 import pytest  # used for the exception testing
 
 from red_black_tree import RedBlackTree, RED, BLACK
-# import random
+import random
+
+
+def traverse_nodes(rbt, blacks=0):
+    if rbt.color is BLACK:
+        blacks += 1
+    rbt.blacks = blacks
+
+    if rbt.leftchild:
+        for i in traverse_nodes(rbt.leftchild, rbt.blacks):
+            yield i
+
+    if not rbt._EMPTY:
+        yield rbt
+
+    if rbt.rightchild:
+        for i in traverse_nodes(rbt.rightchild, rbt.blacks):
+            yield i
+
 
 def test_preliminary_insert():
     rbt = RedBlackTree()
@@ -100,3 +118,21 @@ def test_cases_four_and_five():
     assert rbt.leftchild.value == 10
     assert rbt.rightchild.color is RED
     assert rbt.rightchild.value == 12
+
+def test_insertion():
+    rbt = RedBlackTree()
+    for i in xrange(100):
+        rbt.insert(random.randint(0, 1e6))
+    assert rbt.size() == 100
+
+    for j in traverse_nodes(rbt):
+        # Test that all red nodes have black children (or None)
+        if j.color is RED:
+            print j.value, j.rightchild, j.leftchild
+            if j.leftchild:
+                assert j.leftchild.color is BLACK
+            if j.rightchild:
+                assert j.rightchild.color is BLACK
+    # Something is wrong here.
+
+    # Test that all leaves (Nones) have the same number of blacks in their path
