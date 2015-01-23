@@ -126,7 +126,7 @@ class RedBlackTree(BST):
             return
 
         if ((self.grandparent.leftchild is not None) and
-            (self is self.grandparent.leftchild.rightchild)):
+                (self is self.grandparent.leftchild.rightchild)):
             # We know our parent is RED, uncle must be BLACK, CASE 4A
             self.parent._rotate_right()  # Rotate self into parent
             # Now "self" refers to invalid orphan node, we want
@@ -149,3 +149,50 @@ class RedBlackTree(BST):
             self.grandparent._rotate_right()
         else:
             self.grandparent._rotate_left()
+
+    def delete(self, val, parent=None):
+        """remove val from the tree if present. If not present no change.
+        Return None in all cases. Rebalance according to red-black rules"""
+        if self._EMPTY:  # We're an empty head
+            return
+        if val == self.value:
+            # Do the deletion
+            if (not self.leftchild) and (not self.rightchild):
+                if parent:
+                    if parent.leftchild and parent.leftchild is self:
+                        parent.leftchild = None
+                    else:  # We must be the right child
+                        parent.rightchild = None
+                    return
+                # No parent (we are head) if we are here
+                self.value = None
+                self._EMPTY = True
+                return
+
+            # Here, we know we have at least one child
+            if not self.leftchild:  # must have only a rightchild
+                self._replacenode(self.rightchild)
+                return
+            if not self.rightchild:  # must have only a leftchild
+                self._replacenode(self.leftchild)
+                return
+
+            # Here, we must do the two-child deletion
+            if self.balance() < 0:  # left-heavy, delete on right
+                self.value = \
+                    self.rightchild._find_minimum_and_delete(parent=self)
+            else:  # right-heavy (or balanced)
+                self.value = \
+                    self.leftchild._find_maximum_and_delete(parent=self)
+            return
+
+        # Keep searching (with parent info)
+        if val > self.value:
+            if not self.rightchild:
+                return  # Val is not in tree
+            return self.rightchild.delete(val, parent=self)
+
+        # If we get here it'll be on the left
+        if not self.leftchild:
+            return
+        return self.leftchild.delete(val, parent=self)
