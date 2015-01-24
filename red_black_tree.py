@@ -160,7 +160,7 @@ class RedBlackTree(BST):
         else:
             self.grandparent._rotate_left()
 
-    def delete(self, val, parent=None):
+    def delete(self, val):
         """remove val from the tree if present. If not present no change.
         Return None in all cases. Rebalance according to red-black rules"""
         if self._EMPTY:  # We're an empty head
@@ -168,15 +168,32 @@ class RedBlackTree(BST):
         if val == self.value:
             # Do the deletion
             if (not self.leftchild) and (not self.rightchild):
-                if parent:
-                    if parent.leftchild and parent.leftchild is self:
-                        parent.leftchild = None
+                # CASE 1, we are RED (everything is fine, just remove self)
+                # we must have a parent (because the head is black)
+                if self.color is RED:
+                    if self.parent.leftchild and self.parent.leftchild is self:
+                        self.parent.leftchild = None
                     else:  # We must be the right child
-                        parent.rightchild = None
+                        self.parent.rightchild = None
                     return
+                else:  # We are black, CASE 2
+                    if self.sibling and (self.sibling.color is RED):
+                        self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
+                        if self is self.parent.leftchild:
+                            self.parent._rotate_right()
+                            # Need to update self now
+                            self = self.parent.leftchild
+                        else:
+                            self.parent.rotate_left()
+                            # Need to update self now
+                            self = self.parent.rightchild
+
+
+
                 # No parent (we are head) if we are here
                 self.value = None
                 self._EMPTY = True
+                self.color = BLACK
                 return
 
             # Here, we know we have at least one child
