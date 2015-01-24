@@ -52,6 +52,16 @@ class RedBlackTree(BST):
             return self.grandparent.rightchild
         return self.grandparent.leftchild
 
+    @property
+    def sibling(self):
+        """Return sibling node, None if it doesn't exist"""
+        if self.parent:
+            if self is self.parent.leftchild:
+                return self.parent.rightchild
+            else:
+                return self.parent.leftchild
+        return None
+
     def _rotate_right(self):
         # Rotate self.rightchild into self
         if self._EMPTY or (self.rightchild is None):
