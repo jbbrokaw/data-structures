@@ -182,7 +182,7 @@ class RedBlackTree(BST):
             # Here, we must do the two-child deletion (same as in plain bst, only copy the value)
             if self.balance() < 0:  # left-heavy, delete on right
                 self.value = \
-                    self.rightchild._find_minimum_and_delete()
+                    self.rightchild._find_minimum_and_delete(parent=self)
             else:  # right-heavy (or balanced)
                 self.value = \
                     self.leftchild._find_maximum_and_delete(parent=self)
@@ -199,18 +199,32 @@ class RedBlackTree(BST):
             return
         return self.leftchild.delete(val, parent=self)
 
+    def _replace(self, newnode):
+        """Replace self with newnode (possibly None, possibly with its own children)"""
+        if self.parent.leftchild and self.parent.leftchild is self:
+            self.parent.leftchild = newnode
+        else:  # We must be the right child
+            self.parent.rightchild = newnode
+        if newnode:
+            newnode.parent = self.parent
+
     def _replace_with_child(self, child):
         # CASE 1, we are RED (everything is fine, just remove self)
         # we must have a parent (because the head is black)
         if self.color is RED:
-            if self.parent.leftchild and self.parent.leftchild is self:
-                self.parent.leftchild = child
-            else:  # We must be the right child
-                self.parent.rightchild = child
-            if child:
-                child.parent = self.parent
+            self._do_replace(child)
             return
-        else:  # We are black, CASE 2
+        else:  # We are black
+            # CASE 2, child is red, just paint it black
+            if child and (child.color is RED):
+                child.color = BLACK
+                self._do_replace(child)
+                return
+            # Now, both self & child are black
+            # CASE 3: We are root
+            if not self.parent:
+                self._do_replace(child)
+                return
             if self.sibling and (self.sibling.color is RED):
                 self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
                 if self is self.parent.leftchild:
@@ -222,3 +236,12 @@ class RedBlackTree(BST):
                     # Need to update self now
                     self = self.parent.rightchild
                 # Don't return, move on to cases 3 and so on.
+        # CASE 3: self, sibling, parent, and sibling's children are all black
+            if self.sibling and (self.sibling.color is BLACK) \
+                    and (self.parent.color is BLACK) \
+                    and ((not self.sibling.leftchild)
+                         or (self.sibling.leftchild.color is BLACK)) \
+                    and ((not self.sibling.rightchild)
+                         or (self.sibling.rightchild.color is BLACK)):
+                self.sibling.color = RED
+                self.parent._replace_with_child(self.parent)
