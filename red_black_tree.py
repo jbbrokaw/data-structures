@@ -179,7 +179,8 @@ class RedBlackTree(BST):
                 self._replace_with_child(self.leftchild)
                 return
 
-            # Here, we must do the two-child deletion (same as in plain bst, only copy the value)
+            # Here, we must do the two-child deletion (same as in plain bst,
+            # only copy the value)
             if self.balance() < 0:  # left-heavy, delete on right
                 self.value = \
                     self.rightchild._find_minimum_and_delete(parent=self)
@@ -192,15 +193,16 @@ class RedBlackTree(BST):
         if val > self.value:
             if not self.rightchild:
                 return  # Val is not in tree
-            return self.rightchild.delete(val, parent=self)
+            return self.rightchild.delete(val)
 
         # If we get here it'll be on the left
         if not self.leftchild:
             return
-        return self.leftchild.delete(val, parent=self)
+        return self.leftchild.delete(val)
 
     def _replace(self, newnode):
-        """Replace self with newnode (possibly None, possibly with its own children)"""
+        """Replace self with newnode (possibly None, possibly with its
+        own children)"""
         if self.parent.leftchild and self.parent.leftchild is self:
             self.parent.leftchild = newnode
         else:  # We must be the right child
@@ -212,27 +214,28 @@ class RedBlackTree(BST):
         # CASE 1, we are RED (everything is fine, just remove self)
         # we must have a parent (because the head is black)
         if self.color is RED:
-            self._do_replace(child)
+            self._replace(child)
             return
         else:  # We are black
             # CASE 2, child is red, just paint it black
             if child and (child.color is RED):
                 child.color = BLACK
-                self._do_replace(child)
+                self._replace(child)
                 return
             # Now, both self & child are black
             # CASE 3: We are root
             if not self.parent:
-                self._do_replace(child)
+                self._replace(child)
                 return
             if self.sibling and (self.sibling.color is RED):
-                self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
+                self.sibling.color, self.parent.color = \
+                    self.parent.color, self.sibling.color
                 if self is self.parent.leftchild:
                     self.parent._rotate_right()
                     # Need to update self now
                     self = self.parent.leftchild
                 else:
-                    self.parent.rotate_left()
+                    self.parent._rotate_left()
                     # Need to update self now
                     self = self.parent.rightchild
                 # Don't return, move on to cases 3 and so on.
@@ -245,3 +248,57 @@ class RedBlackTree(BST):
                          or (self.sibling.rightchild.color is BLACK)):
                 self.sibling.color = RED
                 self.parent._replace_with_child(self.parent)
+
+    def get_dot(self):
+        """return the tree with root 'self' as a dot graph for visualization"""
+        return "digraph G{\n%s}" \
+            % (
+                "" if self._EMPTY
+                else ("\t%s [style=filled, fillcolor=black, fontcolor=white];"
+                      "\n\n%s\n" %
+                      (self.value, "\n".join(self._get_dot())))
+            )
+
+    def _get_dot(self):
+        """recursively prepare a dot graph entry for this node."""
+        import random
+        if self.leftchild:
+            yield ("\t{0} [style=filled, fillcolor={1}, fontcolor={2}];" +
+                   "\n\t{3} -> {0};").format(
+                self.leftchild.value,
+                "red" if self.leftchild.color is RED
+                else "black",
+                "white" if self.leftchild.color is BLACK
+                else "black",
+                self.value)
+            for i in self.leftchild._get_dot():
+                yield i
+        elif self.rightchild:
+            r = random.randint(0, 1e9)
+            yield "\tnull%s [shape=point];" % r
+            yield "\t%s -> null%s;" % (self.value, r)
+        if self.rightchild:
+            yield ("\t{0} [style=filled, fillcolor={1}, fontcolor={2}];" +
+                   "\n\t{3} -> {0};").format(
+                self.rightchild.value,
+                "red" if self.rightchild.color is RED
+                else "black",
+                "white" if self.rightchild.color is BLACK
+                else "black",
+                self.value)
+            for i in self.rightchild._get_dot():
+                yield i
+        elif self.leftchild:
+            r = random.randint(0, 1e9)
+            yield "\tnull%s [shape=point];" % r
+            yield "\t%s -> null%s;" % (self.value, r)
+
+if __name__ == '__main__':
+    import random
+    # Setup for visualization
+    rbt = RedBlackTree()
+    while rbt.size() < 50:
+        rbt.insert(random.randint(0, 1e4))
+    assert rbt.size() == 50
+    rbt.update_dot()
+    print "Balance = ", rbt.balance()
