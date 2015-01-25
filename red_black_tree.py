@@ -168,46 +168,21 @@ class RedBlackTree(BST):
         if val == self.value:
             # Do the deletion
             if (not self.leftchild) and (not self.rightchild):
-                # CASE 1, we are RED (everything is fine, just remove self)
-                # we must have a parent (because the head is black)
-                if self.color is RED:
-                    if self.parent.leftchild and self.parent.leftchild is self:
-                        self.parent.leftchild = None
-                    else:  # We must be the right child
-                        self.parent.rightchild = None
-                    return
-                else:  # We are black, CASE 2
-                    if self.sibling and (self.sibling.color is RED):
-                        self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
-                        if self is self.parent.leftchild:
-                            self.parent._rotate_right()
-                            # Need to update self now
-                            self = self.parent.leftchild
-                        else:
-                            self.parent.rotate_left()
-                            # Need to update self now
-                            self = self.parent.rightchild
-
-
-
-                # No parent (we are head) if we are here
-                self.value = None
-                self._EMPTY = True
-                self.color = BLACK
+                self._replace_with_child(None)
                 return
 
             # Here, we know we have at least one child
             if not self.leftchild:  # must have only a rightchild
-                self._replacenode(self.rightchild)
+                self._replace_with_child(self.rightchild)
                 return
             if not self.rightchild:  # must have only a leftchild
-                self._replacenode(self.leftchild)
+                self._replace_with_child(self.leftchild)
                 return
 
-            # Here, we must do the two-child deletion
+            # Here, we must do the two-child deletion (same as in plain bst, only copy the value)
             if self.balance() < 0:  # left-heavy, delete on right
                 self.value = \
-                    self.rightchild._find_minimum_and_delete(parent=self)
+                    self.rightchild._find_minimum_and_delete()
             else:  # right-heavy (or balanced)
                 self.value = \
                     self.leftchild._find_maximum_and_delete(parent=self)
@@ -223,3 +198,27 @@ class RedBlackTree(BST):
         if not self.leftchild:
             return
         return self.leftchild.delete(val, parent=self)
+
+    def _replace_with_child(self, child):
+        # CASE 1, we are RED (everything is fine, just remove self)
+        # we must have a parent (because the head is black)
+        if self.color is RED:
+            if self.parent.leftchild and self.parent.leftchild is self:
+                self.parent.leftchild = child
+            else:  # We must be the right child
+                self.parent.rightchild = child
+            if child:
+                child.parent = self.parent
+            return
+        else:  # We are black, CASE 2
+            if self.sibling and (self.sibling.color is RED):
+                self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
+                if self is self.parent.leftchild:
+                    self.parent._rotate_right()
+                    # Need to update self now
+                    self = self.parent.leftchild
+                else:
+                    self.parent.rotate_left()
+                    # Need to update self now
+                    self = self.parent.rightchild
+                # Don't return, move on to cases 3 and so on.
