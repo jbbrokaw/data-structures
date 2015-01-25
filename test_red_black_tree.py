@@ -71,6 +71,22 @@ def test_uncle():
     assert rbt.leftchild.rightchild.uncle.value == 12
     assert rbt.leftchild.leftchild.uncle.value == 12
 
+
+def test_sibling():
+    rbt = RedBlackTree()
+    rbt.insert(10)  # .    10
+    rbt.insert(12)  # .   /  \
+    rbt.insert(8)  # .   8   12
+    rbt.insert(13)  # . /    / \
+    rbt.insert(7)  # . 7    11  13
+    rbt.insert(11)
+    assert rbt.sibling is None
+    assert rbt.leftchild.sibling.value == 12
+    assert rbt.rightchild.sibling.value == 8
+    assert rbt.leftchild.leftchild.sibling is None
+    assert rbt.rightchild.rightchild.sibling.value == 11
+
+
 def test_cases_one_through_three():
     rbt = RedBlackTree()
     # Case 1, root is head
