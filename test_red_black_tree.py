@@ -29,6 +29,27 @@ def traverse_nodes(rbt, blacks=0):
             yield i
 
 
+def check_validity(rbt):
+    """Ensure that the red-black tree exhibits all required properties"""
+    assert rbt.parent is None  # Problems if we're not the head
+    assert rbt.color is BLACK
+
+    blacks = 0
+    for j in traverse_nodes(rbt):
+        # Test that all red nodes have black children (or None)
+        if j.color is RED:
+            if j.leftchild:
+                assert j.leftchild.color is BLACK
+            if j.rightchild:
+                assert j.rightchild.color is BLACK
+
+        # Test that all leaves (Nones) have the same number of blacks
+        # in their paths
+        blacks = max([blacks, j.blacks])
+        if (j.leftchild is None) or (j.rightchild is None):
+            assert j.blacks == blacks
+
+
 def test_preliminary_insert():
     rbt = RedBlackTree()
     assert rbt.color == BLACK
@@ -143,17 +164,17 @@ def test_insertion():
     assert abs(rbt.balance()) <= 1
     assert rbt.depth() <= 10
 
-    blacks = 0
-    for j in traverse_nodes(rbt):
-        # Test that all red nodes have black children (or None)
-        if j.color is RED:
-            if j.leftchild:
-                assert j.leftchild.color is BLACK
-            if j.rightchild:
-                assert j.rightchild.color is BLACK
+    check_validity(rbt)
 
-        # Test that all leaves (Nones) have the same number of blacks
-        # in their paths
-        blacks = max([blacks, j.blacks])
-        if (j.leftchild is None) or (j.rightchild is None):
-            assert j.blacks == blacks
+
+# Need to demonstrate individual deletion cases, but show it works in general:
+# def test_deletion():
+#     numberpool = [random.randint(0, 1e4) for i in xrange(256)]
+#     rbt = RedBlackTree()
+#     for i in numberpool:
+#         rbt.insert(i)
+#         check_validity(rbt)
+#     random.shuffle(numberpool)
+#     for i in numberpool:
+#         rbt.delete(i)
+#         check_validity(rbt)
