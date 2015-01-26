@@ -168,13 +168,13 @@ def test_insertion():
 
 
 # Need to demonstrate individual deletion cases, but show it works in general:
-# def test_deletion():
-#     numberpool = [random.randint(0, 1e4) for i in xrange(256)]
-#     rbt = RedBlackTree()
-#     for i in numberpool:
-#         rbt.insert(i)
-#         check_validity(rbt)
-#     random.shuffle(numberpool)
-#     for i in numberpool:
-#         rbt.delete(i)
-#         check_validity(rbt)
+def test_deletion():
+    numberpool = [random.randint(0, 1e4) for i in xrange(256)]
+    rbt = RedBlackTree()
+    for i in numberpool:
+        rbt.insert(i)
+        check_validity(rbt)
+    random.shuffle(numberpool)
+    for i in numberpool:
+        rbt.delete(i)
+        check_validity(rbt)

@@ -235,7 +235,8 @@ class RedBlackTree(BST):
                 child.color = BLACK
                 self._replace(child)
                 return
-            # Now, both self & child are black (child is always None first time thru)
+            # Now, both self & child are black (child is always None
+            # first time thru)
             # CASE 3: We are root
             if not self.parent:
                 self._replace(child)
@@ -253,7 +254,7 @@ class RedBlackTree(BST):
                     # Need to update self now
                     self = self.parent.rightchild
                 # Don't return or replace, move on to cases 6 and higher.
-            # CASE 5: self, sibling, parent, and sibling's children are all black
+            # CASE 5: self, sibling, parent, and sibling's children are black
             if self.sibling and (self.sibling.color is BLACK) \
                     and (self.parent.color is BLACK) \
                     and ((not self.sibling.leftchild)
@@ -276,35 +277,42 @@ class RedBlackTree(BST):
                     self.parent.color, self.sibling.color
                 self._replace(child)
                 return
-            # CASE 7: sibling black, sibling.leftchild is red, sibling.rightchild is black,
+            # CASE 7: sibling black, sibling.leftchild is red,
+            # sibling.rightchild is black,
             # self is leftchild of parent
             # OR mirror image
             # we rotate leftchild up to sibling, make old sibling red,
             # and it's old leftchild (new parent) black
             if self.parent.leftchild and (self.parent.leftchild is self) and \
                     self.sibling and (self.sibling.color is BLACK) \
-                    and self.sibling.leftchild and (self.sibling.leftchild.color is RED) and \
-                    ((self.sibling.rightchild is None) or (self.sibling.rightchild.color is BLACK)):
+                    and self.sibling.leftchild \
+                    and (self.sibling.leftchild.color is RED) and \
+                    ((self.sibling.rightchild is None) or
+                        (self.sibling.rightchild.color is BLACK)):
                 self.sibling.color, self.sibling.leftchild.color = \
                     self.sibling.leftchild.color, self.sibling.color
                 self.sibling._rotate_left()
                 # Do not replace or return, continue to case 8
             if self.parent.rightchild and (self.parent.rightchild is self) and \
                     self.sibling and (self.sibling.color is BLACK) \
-                    and self.sibling.rightchild and (self.sibling.rightchild.color is RED) and \
-                    ((self.sibling.leftchild is None) or (self.sibling.leftchild.color is BLACK)):
+                    and self.sibling.rightchild \
+                    and (self.sibling.rightchild.color is RED) and \
+                    ((self.sibling.leftchild is None) or
+                        (self.sibling.leftchild.color is BLACK)):
                 self.sibling.color, self.sibling.rightchild.color = \
                     self.sibling.rightchild.color, self.sibling.color
                 self.sibling._rotate_right()
                 # Do not replace or return, continue to case 8
             # CASE 8:  sibling is black, sibling's right child is red, and
             # self is the left child of its parent, or mirror image
-            # We rotate sibling up to parent and swap sibling & parent's colors,
+            # We rotate sibling up to parent and swap sibling & parent colors,
             # Make sibling's right (farthest from self) child black
             if self.parent.leftchild and (self.parent.leftchild is self) and \
                     self.sibling and (self.sibling.color is BLACK) \
-                    and self.sibling.rightchild and (self.sibling.rightchild.color is RED):
-                self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
+                    and self.sibling.rightchild \
+                    and (self.sibling.rightchild.color is RED):
+                self.sibling.color, self.parent.color = \
+                    self.parent.color, self.sibling.color
                 self.sibling.rightchild.color = BLACK
                 self.parent._rotate_right()
                 # I think self is OK here
@@ -313,9 +321,11 @@ class RedBlackTree(BST):
                 return
             if self.parent.rightchild and (self.parent.rightchild is self) and \
                     self.sibling and (self.sibling.color is BLACK) \
-                    and self.sibling.leftchild and (self.sibling.leftchild.color is RED):
-                self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
-                self.sibling.leftchild.color = RED
+                    and self.sibling.leftchild \
+                    and (self.sibling.leftchild.color is RED):
+                self.sibling.color, self.parent.color = \
+                    self.parent.color, self.sibling.color
+                self.sibling.leftchild.color = BLACK
                 self.parent._rotate_left()
                 # I think self is OK here
                 print self.parent.value
