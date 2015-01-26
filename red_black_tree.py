@@ -160,7 +160,7 @@ class RedBlackTree(BST):
         else:
             self.grandparent._rotate_left()
 
-    def delete(self, val):
+    def delete(self, val, parent=None):
         """remove val from the tree if present. If not present no change.
         Return None in all cases. Rebalance according to red-black rules"""
         if self._EMPTY:  # We're an empty head
@@ -203,6 +203,20 @@ class RedBlackTree(BST):
     def _replace(self, newnode):
         """Replace self with newnode (possibly None, possibly with its
         own children)"""
+        if not self.parent:
+            if not newnode:
+                self.value = None
+                self._EMPTY = True
+                self.leftchild = None
+                self.rightchild = None
+                self.color = BLACK
+                return
+            self.value = newnode.value
+            self.leftchild = newnode.leftchild
+            self.rightchild = newnode.rightchild
+            self.color = newnode.color
+            return
+
         if self.parent.leftchild and self.parent.leftchild is self:
             self.parent.leftchild = newnode
         else:  # We must be the right child
@@ -211,22 +225,22 @@ class RedBlackTree(BST):
             newnode.parent = self.parent
 
     def _replace_with_child(self, child):
-        # CASE 1, we are RED (everything is fine, just remove self)
-        # we must have a parent (because the head is black)
+        # CASE 1: we are RED (everything is fine, just remove self)
         if self.color is RED:
             self._replace(child)
             return
         else:  # We are black
-            # CASE 2, child is red, just paint it black
+            # CASE 2: child is red, just paint it black
             if child and (child.color is RED):
                 child.color = BLACK
                 self._replace(child)
                 return
-            # Now, both self & child are black
+            # Now, both self & child are black (child is always None first time thru)
             # CASE 3: We are root
             if not self.parent:
                 self._replace(child)
                 return
+            # CASE 4: Sibling is red
             if self.sibling and (self.sibling.color is RED):
                 self.sibling.color, self.parent.color = \
                     self.parent.color, self.sibling.color
@@ -238,8 +252,8 @@ class RedBlackTree(BST):
                     self.parent._rotate_left()
                     # Need to update self now
                     self = self.parent.rightchild
-                # Don't return, move on to cases 3 and so on.
-        # CASE 3: self, sibling, parent, and sibling's children are all black
+                # Don't return or replace, move on to cases 6 and higher.
+            # CASE 5: self, sibling, parent, and sibling's children are all black
             if self.sibling and (self.sibling.color is BLACK) \
                     and (self.parent.color is BLACK) \
                     and ((not self.sibling.leftchild)
@@ -247,7 +261,66 @@ class RedBlackTree(BST):
                     and ((not self.sibling.rightchild)
                          or (self.sibling.rightchild.color is BLACK)):
                 self.sibling.color = RED
+                self._replace(child)
                 self.parent._replace_with_child(self.parent)
+                return
+            # CASE 6: parent red; self, sibling & sibling's children black
+            # In this case we swap parent & siblings colors
+            if self.sibling and (self.sibling.color is BLACK) \
+                    and (self.parent.color is RED) \
+                    and ((not self.sibling.leftchild)
+                         or (self.sibling.leftchild.color is BLACK)) \
+                    and ((not self.sibling.rightchild)
+                         or (self.sibling.rightchild.color is BLACK)):
+                self.sibling.color, self.parent.color = \
+                    self.parent.color, self.sibling.color
+                self._replace(child)
+                return
+            # CASE 7: sibling black, sibling.leftchild is red, sibling.rightchild is black,
+            # self is leftchild of parent
+            # OR mirror image
+            # we rotate leftchild up to sibling, make old sibling red,
+            # and it's old leftchild (new parent) black
+            if self.parent.leftchild and (self.parent.leftchild is self) and \
+                    self.sibling and (self.sibling.color is BLACK) \
+                    and self.sibling.leftchild and (self.sibling.leftchild.color is RED) and \
+                    ((self.sibling.rightchild is None) or (self.sibling.rightchild.color is BLACK)):
+                self.sibling.color, self.sibling.leftchild.color = \
+                    self.sibling.leftchild.color, self.sibling.color
+                self.sibling._rotate_left()
+                # Do not replace or return, continue to case 8
+            if self.parent.rightchild and (self.parent.rightchild is self) and \
+                    self.sibling and (self.sibling.color is BLACK) \
+                    and self.sibling.rightchild and (self.sibling.rightchild.color is RED) and \
+                    ((self.sibling.leftchild is None) or (self.sibling.leftchild.color is BLACK)):
+                self.sibling.color, self.sibling.rightchild.color = \
+                    self.sibling.rightchild.color, self.sibling.color
+                self.sibling._rotate_right()
+                # Do not replace or return, continue to case 8
+            # CASE 8:  sibling is black, sibling's right child is red, and
+            # self is the left child of its parent, or mirror image
+            # We rotate sibling up to parent and swap sibling & parent's colors,
+            # Make sibling's right (farthest from self) child black
+            if self.parent.leftchild and (self.parent.leftchild is self) and \
+                    self.sibling and (self.sibling.color is BLACK) \
+                    and self.sibling.rightchild and (self.sibling.rightchild.color is RED):
+                self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
+                self.sibling.rightchild.color = BLACK
+                self.parent._rotate_right()
+                # I think self is OK here
+                print self.parent.value
+                self._replace(child)
+                return
+            if self.parent.rightchild and (self.parent.rightchild is self) and \
+                    self.sibling and (self.sibling.color is BLACK) \
+                    and self.sibling.leftchild and (self.sibling.leftchild.color is RED):
+                self.sibling.color, self.parent.color = self.parent.color, self.sibling.color
+                self.sibling.leftchild.color = RED
+                self.parent._rotate_left()
+                # I think self is OK here
+                print self.parent.value
+                self._replace(child)
+                return
 
     def get_dot(self):
         """return the tree with root 'self' as a dot graph for visualization"""
@@ -255,7 +328,7 @@ class RedBlackTree(BST):
             % (
                 "" if self._EMPTY
                 else ("\t%s [style=filled, fillcolor=black, fontcolor=white];"
-                      "\n\n%s\n" %
+                      "\n%s\n" %
                       (self.value, "\n".join(self._get_dot())))
             )
 
