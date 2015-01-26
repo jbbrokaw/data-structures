@@ -62,6 +62,7 @@ Data Structures
     * Binary search tree which incorporates the AVL rebalancing algorith on insertion and deletion
   11. Red-Black Tree
     * Binary search tree which incorporates the red-black rebalancing algorithm on insertion
+    * Deletion works, as well
 
 
 ## Algorithms:
