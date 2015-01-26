@@ -120,7 +120,7 @@ class BST(object):
 
     def _find_maximum_and_delete(self, parent=None):
         """Return the maximum value of a (sub)tree and delete its node"""
-        # This is slightly repetitive with _find_minimum, but it;s hard to
+        # This is slightly repetitive with _find_minimum, but it's hard to
         # implement a min/max switch elegantly; I'll just repeat these 7 lines
         current = self
         while current.rightchild:
@@ -162,6 +162,7 @@ class BST(object):
                 #No parent (we are head) if we are here
                 self.value = None
                 self._EMPTY = True
+                return
 
             # Here, we know we have at least one child
             if not self.leftchild:  # must have only a rightchild
