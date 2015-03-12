@@ -71,4 +71,13 @@ Data Structures
     * Returns 1 if more open, -1 if closes unopened ones, 0 if all opens are closed
     * Tests provided
   2. Insertion Sort
-    * Terribly performing, very simple in-place sort of a standard python list
+    * O(n^2) performing, very simple in-place sort of a standard python list
+  3. Merge Sort
+    * O(nlogn) divide-and-conquer, speed is independent of starting condition
+    * The in-place version performs (significantly) worse
+  4. Quick Sort
+    * O(nlogn) to O(n^2) depending on starting conditions
+    * A bit faster and more memory-efficient than merge-sort in most cases
+  5. Radix Sort (for integers and strings)
+    * Only suitable for certain cases (i.e., not floats)
+    * O(kn) performance, where k is the length of the longest word/number
